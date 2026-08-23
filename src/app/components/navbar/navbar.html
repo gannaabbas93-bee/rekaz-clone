@@ -1,0 +1,76 @@
+<header class="navbar-header">
+  <div class="navbar-container">
+    <a href="#" class="brand-logo" aria-label="Rekaz Homepage">
+      <img src="https://rekaz.io/home/_assets/rekaz-logo-en.BAlNHHc0_Z20oSRu.svg" alt="Rekaz" class="navbar__logo-img">
+    </a>
+
+    <!-- Center Nav Links -->
+    <nav class="desktop-nav">
+      <a href="#" class="nav-link active">Home</a>
+      <a href="#" class="nav-link">Pricing</a>
+      <a href="#" class="nav-link">Contact</a>
+    </nav>
+
+    <!-- Right Controls -->
+    <div class="desktop-actions">
+      <button class="lang-switcher" type="button" aria-label="Switch language">
+        <svg class="globe-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="2" y1="12" x2="22" y2="12"></line>
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10z"></path>
+        </svg>
+        <span class="lang-code">ع</span>
+      </button>
+
+      <a href="#" class="navbar__login">Login</a>
+
+      <a href="#" class="navbar__cta">
+        <span>Start Free</span>
+        <span class="arrow">&rarr;</span>
+      </a>
+    </div>
+
+    <!-- Mobile Hamburger Toggle -->
+    <button 
+      class="hamburger-btn" 
+      type="button"
+      [class.active]="isMobileMenuOpen()" 
+      (click)="toggleMobileMenu()"
+      [attr.aria-expanded]="isMobileMenuOpen()"
+      aria-label="Toggle navigation menu"
+    >
+      <span class="bar"></span>
+      <span class="bar"></span>
+      <span class="bar"></span>
+    </button>
+  </div>
+
+  <!-- Mobile Menu Dropdown -->
+  <div class="mobile-menu" [class.open]="isMobileMenuOpen()">
+    <div class="mobile-menu-inner">
+      <nav class="mobile-nav">
+        <a href="#" class="mobile-nav-link active" (click)="closeMobileMenu()">Home</a>
+        <a href="#" class="mobile-nav-link" (click)="closeMobileMenu()">Pricing</a>
+        <a href="#" class="mobile-nav-link" (click)="closeMobileMenu()">Contact</a>
+      </nav>
+      
+      <div class="mobile-actions">
+        <button class="mobile-lang-switcher" type="button" aria-label="Switch language">
+          <svg class="globe-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="2" y1="12" x2="22" y2="12"></line>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10z"></path>
+          </svg>
+          <span>ع (العربية)</span>
+        </button>
+
+        <a href="#" class="navbar__login mobile-login-link" (click)="closeMobileMenu()">Login</a>
+
+        <a href="#" class="navbar__cta mobile-cta-btn" (click)="closeMobileMenu()">
+          <span>Start Free</span>
+          <span class="arrow">&rarr;</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
