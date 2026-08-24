@@ -1,0 +1,171 @@
+<section class="booking-section hbf-root" id="booking">
+  <div class="booking-container">
+    <!-- Header -->
+    <div class="booking-header">
+      <h2 class="booking-title">{{ ts.t().bookingForm.title }}</h2>
+      <p class="booking-subtitle">{{ ts.t().bookingForm.subtitle }}</p>
+    </div>
+
+    <!-- Form Card -->
+    <div class="booking-card">
+      @if (isSuccess()) {
+        <div class="success-message">
+          <div class="success-icon">✓</div>
+          <h3>{{ ts.currentLang() === 'ar' ? 'تم استلام طلبك بنجاح!' : 'Request received successfully!' }}</h3>
+          <p>{{ ts.currentLang() === 'ar' ? 'سيتواصل معك فريقنا في أقرب وقت ممكن.' : 'Our team will get in touch with you shortly.' }}</p>
+        </div>
+      } @else {
+        <form [formGroup]="bookingForm" (ngSubmit)="onSubmit()" class="booking-form" novalidate>
+          <!-- Full Name -->
+          <div class="form-group">
+            <label class="form-label" for="fullName">
+              {{ ts.t().bookingForm.fullNameLabel }}
+              <span class="required-asterisk">*</span>
+            </label>
+            <input 
+              type="text" 
+              id="fullName" 
+              formControlName="fullName"
+              class="form-input" 
+              [class.is-invalid]="submitted() && bookingForm.controls.fullName.invalid"
+              [placeholder]="ts.t().bookingForm.fullNamePlaceholder"
+            >
+            @if (submitted() && bookingForm.controls.fullName.invalid) {
+              <span class="error-message">{{ ts.t().bookingForm.nameRequired }}</span>
+            }
+          </div>
+
+          <!-- Business Type -->
+          <div class="form-group">
+            <label class="form-label" for="businessType">
+              {{ ts.t().bookingForm.businessTypeLabel }}
+              <span class="required-asterisk">*</span>
+            </label>
+            <input 
+              type="text" 
+              id="businessType" 
+              formControlName="businessType"
+              class="form-input" 
+              [class.is-invalid]="submitted() && bookingForm.controls.businessType.invalid"
+              [placeholder]="ts.t().bookingForm.businessTypePlaceholder"
+            >
+            @if (submitted() && bookingForm.controls.businessType.invalid) {
+              <span class="error-message">{{ ts.t().bookingForm.businessTypeRequired }}</span>
+            }
+          </div>
+
+          <!-- Phone Number with Searchable Multi-Country Dropdown -->
+          <div class="form-group">
+            <label class="form-label" for="phoneNumber">
+              {{ ts.t().bookingForm.phoneLabel }}
+              <span class="required-asterisk">*</span>
+            </label>
+            <div class="phone-input-container" dir="ltr">
+              <div class="phone-prefix-wrapper">
+                <button 
+                  type="button" 
+                  class="phone-prefix-box"
+                  (click)="toggleDropdown($event)"
+                  aria-label="Select country code"
+                  [attr.aria-expanded]="isDropdownOpen()"
+                >
+                  <span class="flag-wrapper">
+                    <img 
+                      [src]="selectedCountry().flag" 
+                      [alt]="selectedCountry().name" 
+                      class="flag-img" 
+                    />
+                  </span>
+                  <span class="dial-code-text">{{ selectedCountry().code }}</span>
+                  <svg class="chevron-dual" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
+                  </svg>
+                </button>
+
+                <!-- Searchable Country Dropdown Menu -->
+                @if (isDropdownOpen()) {
+                  <div class="country-dropdown-menu" [class.open-upwards]="openUpwards()">
+                    <!-- Top Search Box -->
+                    <div class="dropdown-search-box">
+                      <svg class="search-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                      </svg>
+                      <input 
+                        type="text" 
+                        placeholder="Search country" 
+                        class="search-input" 
+                        [value]="searchQuery()"
+                        (input)="filterCountries($event)" 
+                        (click)="$event.stopPropagation()"
+                      />
+                    </div>
+
+                    <!-- Scrollable Country List -->
+                    <div class="country-list-scroll">
+                      @for (country of filteredCountries(); track country.name) {
+                        <div 
+                          class="dropdown-item" 
+                          [class.selected]="country.name === selectedCountry().name"
+                          (click)="selectCountry(country, $event)"
+                        >
+                          <div class="item-left">
+                            <span class="flag-wrapper">
+                              <img [src]="country.flag" [alt]="country.name" class="flag-img" />
+                            </span>
+                            <span class="country-name">{{ country.name }}</span>
+                          </div>
+                          <div class="item-right">
+                            <span class="country-code-text">{{ country.code }}</span>
+                            @if (country.name === selectedCountry().name) {
+                              <svg class="check-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                              </svg>
+                            }
+                          </div>
+                        </div>
+                      } @empty {
+                        <div class="no-results">
+                          {{ ts.currentLang() === 'ar' ? 'لا توجد نتائج' : 'No country found' }}
+                        </div>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+
+              <input 
+                type="tel" 
+                id="phoneNumber" 
+                formControlName="phone"
+                class="form-input phone-input" 
+                [class.is-invalid]="submitted() && bookingForm.controls.phone.invalid"
+                [placeholder]="ts.t().bookingForm.phonePlaceholder"
+              >
+            </div>
+            @if (submitted() && bookingForm.controls.phone.invalid) {
+              @if (bookingForm.controls.phone.errors?.['required']) {
+                <span class="error-message">{{ ts.t().bookingForm.phoneRequired }}</span>
+              } @else {
+                <span class="error-message">{{ ts.t().bookingForm.phoneInvalid }}</span>
+              }
+            }
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit" class="submit-btn">
+            <span>{{ ts.t().bookingForm.submitButton }}</span>
+            <span class="btn-arrow" [class.rtl-arrow]="ts.currentLang() === 'ar'">➔</span>
+          </button>
+        </form>
+      }
+
+      <!-- Trust Proof / Rating -->
+      <div class="trust-proof">
+        <span class="rating-score">4.9/5</span>
+        <span class="rating-stars" aria-label="5 stars">⭐⭐⭐⭐⭐</span>
+        <span class="trust-divider">·</span>
+        <span class="clients-count">{{ ts.t().bookingForm.clientsCount }}</span>
+      </div>
+    </div>
+  </div>
+</section>

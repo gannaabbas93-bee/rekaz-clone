@@ -1,4 +1,5 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, inject } from '@angular/core';
+import { TranslationService } from '../../services/translation.service';
 
 @Component({
   selector: 'app-hero',
@@ -8,21 +9,26 @@ import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
   styleUrl: './hero.scss'
 })
 export class Hero implements OnInit, OnDestroy {
-  words: string[] = ['Bookings', 'Memberships'];
+  readonly ts = inject(TranslationService);
+
   currentIndex = 0;
-  currentWord = this.words[0];
   isHidden = false;
   private intervalId: any;
 
   constructor(private cdr: ChangeDetectorRef) {}
+
+  get currentWord(): string {
+    const words = this.ts.t().hero.words;
+    return words[this.currentIndex % words.length];
+  }
 
   ngOnInit(): void {
     this.intervalId = setInterval(() => {
       this.isHidden = true;
       this.cdr.detectChanges();
       setTimeout(() => {
-        this.currentIndex = (this.currentIndex + 1) % this.words.length;
-        this.currentWord = this.words[this.currentIndex];
+        const words = this.ts.t().hero.words;
+        this.currentIndex = (this.currentIndex + 1) % words.length;
         this.isHidden = false;
         this.cdr.detectChanges();
       }, 350);

@@ -16,27 +16,27 @@
             </div>
             <div class="float-badge badge-top">
               <span class="live-dot"></span>
-              <span>+320 bookings today</span>
+              <span>{{ ts.t().hero.badgeBookings }}</span>
             </div>
             <div class="float-badge badge-bottom">
               <span class="badge-emoji">💰</span>
-              <span>Monthly revenue ↑ 34%</span>
+              <span>{{ ts.t().hero.badgeRevenue }}</span>
             </div>
           </div>
         </div>
       </div>
       <div class="content-col">
         <h1 class="hero-headline">
-          Zero Hassle
+          {{ ts.t().hero.headlinePrefix }}
           <span class="dyn-word-wrap">
             <span class="dyn-word" [class.is-hidden]="isHidden">{{ currentWord }}</span>
           </span>
         </h1>
-        <p class="hero-desc">Rekaz booking and membership system gives you a branded site, online payments, WhatsApp automation, and performance reporting.</p>
+        <p class="hero-desc">{{ ts.t().hero.description }}</p>
         <div class="cta-group">
-          <a href="#" class="navbar__cta hero-cta-btn">
-            <span>Try Rekaz</span>
-            <span class="arrow">&rarr;</span>
+          <a href="#booking" class="navbar__cta hero-cta-btn">
+            <span>{{ ts.t().hero.tryRekaz }}</span>
+            <span class="arrow" [class.rtl-arrow]="ts.currentLang() === 'ar'">&rarr;</span>
           </a>
         </div>
         <div class="trust-block">
@@ -49,12 +49,12 @@
           </div>
           <div class="trust-vline"></div>
           <div class="trust-info">
-            <span class="trust-count">30,000+ businesses across the Gulf use Rekaz</span>
+            <span class="trust-count">{{ ts.t().hero.trustBusinesses }}</span>
             <div class="trust-rating">
               <span class="trust-stars">★★★★★</span>
-              <span class="trust-score">4.9</span>
+              <span class="trust-score">{{ ts.t().hero.score }}</span>
               <span class="trust-dot">·</span>
-              <span class="trust-label">No commission</span>
+              <span class="trust-label">{{ ts.t().hero.noCommission }}</span>
             </div>
           </div>
         </div>

@@ -6,27 +6,27 @@
 
     <!-- Center Nav Links -->
     <nav class="desktop-nav">
-      <a href="#" class="nav-link active">Home</a>
-      <a href="#" class="nav-link">Pricing</a>
-      <a href="#" class="nav-link">Contact</a>
+      <a href="#" class="nav-link active">{{ ts.t().navbar.home }}</a>
+      <a href="#" class="nav-link">{{ ts.t().navbar.pricing }}</a>
+      <a href="#" class="nav-link">{{ ts.t().navbar.contact }}</a>
     </nav>
 
     <!-- Right Controls -->
     <div class="desktop-actions">
-      <button class="lang-switcher" type="button" aria-label="Switch language">
+      <button class="lang-switcher" type="button" (click)="toggleLanguage()" aria-label="Switch language">
         <svg class="globe-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="10"></circle>
           <line x1="2" y1="12" x2="22" y2="12"></line>
           <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10z"></path>
         </svg>
-        <span class="lang-code">ع</span>
+        <span class="lang-code">{{ ts.t().navbar.langBtn }}</span>
       </button>
 
-      <a href="#" class="navbar__login">Login</a>
+      <a href="#" class="navbar__login">{{ ts.t().navbar.login }}</a>
 
-      <a href="#" class="navbar__cta">
-        <span>Start Free</span>
-        <span class="arrow">&rarr;</span>
+      <a href="#booking" class="navbar__cta">
+        <span>{{ ts.t().navbar.startFree }}</span>
+        <span class="arrow" [class.rtl-arrow]="ts.currentLang() === 'ar'">&rarr;</span>
       </a>
     </div>
 
@@ -49,26 +49,26 @@
   <div class="mobile-menu" [class.open]="isMobileMenuOpen()">
     <div class="mobile-menu-inner">
       <nav class="mobile-nav">
-        <a href="#" class="mobile-nav-link active" (click)="closeMobileMenu()">Home</a>
-        <a href="#" class="mobile-nav-link" (click)="closeMobileMenu()">Pricing</a>
-        <a href="#" class="mobile-nav-link" (click)="closeMobileMenu()">Contact</a>
+        <a href="#" class="mobile-nav-link active" (click)="closeMobileMenu()">{{ ts.t().navbar.home }}</a>
+        <a href="#" class="mobile-nav-link" (click)="closeMobileMenu()">{{ ts.t().navbar.pricing }}</a>
+        <a href="#" class="mobile-nav-link" (click)="closeMobileMenu()">{{ ts.t().navbar.contact }}</a>
       </nav>
       
       <div class="mobile-actions">
-        <button class="mobile-lang-switcher" type="button" aria-label="Switch language">
+        <button class="mobile-lang-switcher" type="button" (click)="toggleLanguage()" aria-label="Switch language">
           <svg class="globe-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="10"></circle>
             <line x1="2" y1="12" x2="22" y2="12"></line>
             <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10z"></path>
           </svg>
-          <span>ع (العربية)</span>
+          <span>{{ ts.t().navbar.langName }}</span>
         </button>
 
-        <a href="#" class="navbar__login mobile-login-link" (click)="closeMobileMenu()">Login</a>
+        <a href="#" class="navbar__login mobile-login-link" (click)="closeMobileMenu()">{{ ts.t().navbar.login }}</a>
 
-        <a href="#" class="navbar__cta mobile-cta-btn" (click)="closeMobileMenu()">
-          <span>Start Free</span>
-          <span class="arrow">&rarr;</span>
+        <a href="#booking" class="navbar__cta mobile-cta-btn" (click)="closeMobileMenu()">
+          <span>{{ ts.t().navbar.startFree }}</span>
+          <span class="arrow" [class.rtl-arrow]="ts.currentLang() === 'ar'">&rarr;</span>
         </a>
       </div>
     </div>

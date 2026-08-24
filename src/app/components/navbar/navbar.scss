@@ -3,24 +3,32 @@
   top: 0;
   left: 0;
   width: 100%;
-  height: var(--navbar-height);
-  background-color: var(--surface-color);
-  box-shadow: var(--shadow-sm);
-  z-index: 1000;
+  height: 72px;
+  background-color: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(243, 244, 246, 0.8);
+  z-index: 40;
   display: flex;
   align-items: center;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
 }
 
 .navbar-container {
   width: 100%;
-  max-width: var(--container-max);
+  max-width: 1280px;
   margin: 0 auto;
-  padding: 0 5vw;
+  padding: 0 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   height: 100%;
+
+  @media (min-width: 640px) {
+    padding: 0 24px;
+  }
+  @media (min-width: 1024px) {
+    padding: 0 32px;
+  }
 }
 
 /* Brand Logo */
@@ -31,11 +39,9 @@
 }
 
 .navbar__logo-img {
-  height: 32px;
+  height: 36px;
   width: auto;
 }
-@media (min-width: 640px) { .navbar__logo-img { height: 36px; } }
-@media (min-width: 768px) { .navbar__logo-img { height: 40px; } }
 
 /* Desktop Navigation Links */
 .desktop-nav {
@@ -45,31 +51,14 @@
 
   .nav-link {
     text-decoration: none;
-    font-size: 15px;
-    font-weight: 600;
-    color: #374151;
+    font-size: 0.9375rem; /* 15px */
+    font-weight: 500;
+    color: #475467;
     transition: color 0.2s ease;
-    position: relative;
     padding: 4px 0;
 
-    &::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 0;
-      height: 2px;
-      background: var(--primary-color);
-      border-radius: 2px;
-      transition: width 0.25s ease;
-    }
-
     &:hover, &.active {
-      color: var(--primary-color);
-
-      &::after {
-        width: 100%;
-      }
+      color: #0c111d;
     }
   }
 }
@@ -87,84 +76,66 @@
     align-items: center;
     gap: 6px;
     cursor: pointer;
-    font-size: 15px;
+    font-size: 0.875rem; /* 14px */
     font-weight: 600;
-    color: #374151;
+    color: #344054;
     padding: 6px 10px;
-    border-radius: var(--border-radius-sm);
+    border-radius: 8px;
     transition: background-color 0.2s ease, color 0.2s ease;
 
     .globe-icon {
       width: 18px;
       height: 18px;
-      stroke: #64748b;
+      stroke: #667085;
       transition: stroke 0.2s ease;
     }
 
     &:hover {
-      background-color: var(--surface-muted);
-      color: var(--primary-color);
+      background-color: #f8fafc;
+      color: #0c111d;
 
       .globe-icon {
-        stroke: var(--primary-color);
+        stroke: #0c111d;
       }
     }
   }
 }
 
-/* Exact Rekaz Navbar CTA and Login Button Styles */
+/* Start Free CTA */
 .navbar__cta {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   background: #ef5050;
-  color: #fff;
-  border-radius: 999px;
-  padding: 9px 18px;
-  font-size: 0.82rem;
-  font-weight: 700;
+  color: #ffffff;
+  border-radius: 9999px;
+  padding: 10px 22px;
+  font-size: 0.875rem; /* 14px */
+  font-weight: 600;
   text-decoration: none;
-  box-shadow: 0 2px 8px #ef505047;
-  transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
+  transition: transform 0.16s ease, background 0.16s ease;
 
   &:hover {
-    background: #d94040;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 16px #ef50505c;
+    background: #e04444;
   }
 
   &:active {
-    transform: scale(0.96);
-    box-shadow: 0 1px 4px #ef505033;
-  }
-
-  @media (min-width: 640px) {
-    padding: 10px 22px;
-    font-size: 0.88rem;
-  }
-
-  @media (min-width: 1024px) {
-    padding: 11px 26px;
-    font-size: 0.92rem;
+    transform: scale(0.97);
   }
 }
 
 .navbar__login {
-  font-size: 0.8rem;
+  font-size: 0.875rem; /* 14px */
   font-weight: 600;
-  color: #64748b;
-  padding: 8px 10px;
+  color: #475467;
+  padding: 8px 12px;
   border-radius: 8px;
   text-decoration: none;
   transition: color 0.16s ease, background 0.16s ease;
 
   &:hover {
-    color: #0f172a;
+    color: #0c111d;
     background: #f8fafc;
-  }
-
-  @media (min-width: 640px) {
-    font-size: 0.85rem;
   }
 }
 
@@ -184,7 +155,7 @@
   .bar {
     width: 100%;
     height: 2.5px;
-    background-color: var(--text-color);
+    background-color: #0c111d;
     border-radius: 2px;
     transition: all 0.3s ease;
   }
@@ -206,16 +177,16 @@
 .mobile-menu {
   display: none;
   position: absolute;
-  top: var(--navbar-height);
+  top: 72px;
   left: 0;
   width: 100%;
-  background-color: var(--surface-color);
-  box-shadow: var(--shadow-lg);
+  background-color: #ffffff;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
   max-height: 0;
   overflow: hidden;
-  transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+  transition: max-height 0.35s ease, opacity 0.3s ease;
   opacity: 0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  border-bottom: 1px solid #f2f4f7;
 
   &.open {
     max-height: 450px;
@@ -223,7 +194,7 @@
   }
 
   .mobile-menu-inner {
-    padding: 20px 5vw 28px 5vw;
+    padding: 20px 24px 28px 24px;
     display: flex;
     flex-direction: column;
     gap: 16px;
@@ -236,16 +207,14 @@
 
     .mobile-nav-link {
       text-decoration: none;
-      font-size: 15px;
-      font-weight: 600;
-      color: #374151;
+      font-size: 0.9375rem;
+      font-weight: 500;
+      color: #475467;
       padding: 8px 0;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.04);
-      transition: color 0.2s ease, padding-left 0.2s ease;
+      border-bottom: 1px solid #f2f4f7;
 
       &:hover, &.active {
-        color: var(--primary-color);
-        padding-left: 6px;
+        color: #ef5050;
       }
     }
   }
@@ -257,23 +226,23 @@
     margin-top: 8px;
 
     .mobile-lang-switcher {
-      background: var(--surface-muted);
+      background: #f8fafc;
       border: none;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
       padding: 10px;
-      border-radius: var(--border-radius-sm);
-      font-size: 14px;
+      border-radius: 8px;
+      font-size: 0.875rem;
       font-weight: 600;
-      color: #374151;
+      color: #344054;
       cursor: pointer;
 
       .globe-icon {
         width: 16px;
         height: 16px;
-        stroke: var(--primary-color);
+        stroke: #ef5050;
       }
     }
 

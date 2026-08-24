@@ -1,4 +1,5 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
+import { TranslationService } from '../../services/translation.service';
 
 @Component({
   selector: 'app-navbar',
@@ -8,6 +9,7 @@ import { Component, signal } from '@angular/core';
   styleUrl: './navbar.scss'
 })
 export class Navbar {
+  readonly ts = inject(TranslationService);
   isMobileMenuOpen = signal(false);
 
   toggleMobileMenu() {
@@ -16,5 +18,9 @@ export class Navbar {
 
   closeMobileMenu() {
     this.isMobileMenuOpen.set(false);
+  }
+
+  toggleLanguage() {
+    this.ts.toggleLanguage();
   }
 }
