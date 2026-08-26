@@ -29,7 +29,7 @@
         <h1 class="hero-headline">
           {{ ts.t().hero.headlinePrefix }}
           <span class="dyn-word-wrap">
-            <span class="dyn-word" [class.is-hidden]="isHidden">{{ currentWord }}</span>
+            <span class="dyn-word" [class.is-hidden]="isFading">{{ currentWord }}</span>
           </span>
         </h1>
         <p class="hero-desc">{{ ts.t().hero.description }}</p>

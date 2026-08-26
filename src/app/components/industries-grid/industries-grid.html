@@ -1,0 +1,20 @@
+<section class="industries-section" id="industries">
+  <div class="industries-container">
+    <!-- Section Title -->
+    <h2 class="industries-title">
+      {{ ts.t().industriesGrid.title }}
+    </h2>
+
+    <!-- Industries Responsive Grid -->
+    <div class="industries-grid">
+      @for (item of industries; track item.key) {
+        <div class="industry-card" role="button" tabindex="0">
+          <div class="icon-wrapper w-12 h-12" [innerHTML]="item.iconSvg"></div>
+          <span class="industry-name">
+            {{ getItemName(item.key) }}
+          </span>
+        </div>
+      }
+    </div>
+  </div>
+</section>

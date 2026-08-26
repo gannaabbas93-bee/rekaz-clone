@@ -40,6 +40,23 @@ export interface Translations {
     phoneRequired: string;
     phoneInvalid: string;
   };
+  industriesGrid: {
+    title: string;
+    items: {
+      gyms: string;
+      studios: string;
+      carWash: string;
+      techHubs: string;
+      realEstate: string;
+      clinics: string;
+      salons: string;
+      travel: string;
+      surfClubs: string;
+      kidsCenters: string;
+      entertainment: string;
+      hospitality: string;
+    };
+  };
 }
 
 const DICTIONARY: Record<Language, Translations> = {
@@ -80,6 +97,23 @@ const DICTIONARY: Record<Language, Translations> = {
       businessTypeRequired: 'Please enter your business type',
       phoneRequired: 'Phone number is required',
       phoneInvalid: 'Please enter a valid phone number'
+    },
+    industriesGrid: {
+      title: 'The #1 Cashier System for Services',
+      items: {
+        gyms: 'Gyms',
+        studios: 'Studios',
+        carWash: 'Car wash',
+        techHubs: 'Tech hubs',
+        realEstate: 'Real estate',
+        clinics: 'Clinics',
+        salons: 'Salons',
+        travel: 'Travel',
+        surfClubs: 'Surf clubs',
+        kidsCenters: 'Kids centers',
+        entertainment: 'Entertainment',
+        hospitality: 'Hospitality'
+      }
     }
   },
   ar: {
@@ -119,6 +153,23 @@ const DICTIONARY: Record<Language, Translations> = {
       businessTypeRequired: 'يرجى إدخال نوع النشاط التجاري',
       phoneRequired: 'رقم الهاتف مطلوب',
       phoneInvalid: 'يرجى إدخال رقم هاتف صحيح'
+    },
+    industriesGrid: {
+      title: 'نظام الكاشير رقم 1 لقطاع الخدمات',
+      items: {
+        gyms: 'النوادي الرياضية',
+        studios: 'الاستوديوهات',
+        carWash: 'مغاسل السيارات',
+        techHubs: 'مساحات العمل والمراكز التقنية',
+        realEstate: 'العقارات',
+        clinics: 'العيادات والمراكز الطبية',
+        salons: 'الصالونات ومراكز التجميل',
+        travel: 'مكاتب السفر والسياحة',
+        surfClubs: 'نوادي ركوب الأمواج',
+        kidsCenters: 'مراكز الأطفال والترفيه',
+        entertainment: 'الفعاليات والترفيه',
+        hospitality: 'الضيافة والفنادق'
+      }
     }
   }
 };

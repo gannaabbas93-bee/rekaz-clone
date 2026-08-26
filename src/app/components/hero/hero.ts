@@ -8,28 +8,36 @@ import { TranslationService } from '../../services/translation.service';
   templateUrl: './hero.html',
   styleUrl: './hero.scss'
 })
-export class Hero implements OnInit, OnDestroy {
+export class HeroComponent implements OnInit, OnDestroy {
   readonly ts = inject(TranslationService);
+  private cdr = inject(ChangeDetectorRef);
+
+  wordsEn = ['Memberships', 'Bookings'];
+  wordsAr = ['العضويات', 'الحجوزات'];
 
   currentIndex = 0;
-  isHidden = false;
+  isFading = false;
   private intervalId: any;
 
-  constructor(private cdr: ChangeDetectorRef) {}
-
   get currentWord(): string {
-    const words = this.ts.t().hero.words;
-    return words[this.currentIndex % words.length];
+    const list = this.ts.currentLang() === 'ar' ? this.wordsAr : this.wordsEn;
+    return list[this.currentIndex % list.length];
   }
 
   ngOnInit(): void {
+    this.startAnimation();
+  }
+
+  startAnimation() {
     this.intervalId = setInterval(() => {
-      this.isHidden = true;
-      this.cdr.detectChanges();
+      this.isFading = true;
+      this.cdr.markForCheck();
+
       setTimeout(() => {
-        const words = this.ts.t().hero.words;
-        this.currentIndex = (this.currentIndex + 1) % words.length;
-        this.isHidden = false;
+        const list = this.ts.currentLang() === 'ar' ? this.wordsAr : this.wordsEn;
+        this.currentIndex = (this.currentIndex + 1) % list.length;
+        this.isFading = false;
+        this.cdr.markForCheck();
         this.cdr.detectChanges();
       }, 350);
     }, 2500);

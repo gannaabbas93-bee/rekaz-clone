@@ -48,20 +48,38 @@
 }
 
 .hero-split { display: flex; flex-direction: column; gap: 32px; }
-@media (min-width: 1024px) { .hero-split { flex-direction: row-reverse; align-items: center; gap: 36px; } }
+@media (min-width: 1024px) { 
+  .hero-split { 
+    flex-direction: row-reverse; 
+    align-items: center; 
+    gap: 28px; 
+  } 
+}
 
-.content-col { display: flex; flex-direction: column; order: 1; width: 100%; min-width: 0; }
-@media (min-width: 1024px) { .content-col { order: 2; flex: 1 1 0%; min-width: 0; } }
+.content-col { 
+  display: flex; 
+  flex-direction: column; 
+  order: 1; 
+  width: 100%; 
+  min-width: 0; 
+}
+@media (min-width: 1024px) { 
+  .content-col { 
+    order: 2; 
+    flex: 1 1 45%; 
+    max-width: 48%; 
+    min-width: 0; 
+  } 
+}
 
 .hero-headline {
-  font-size: clamp(2.25rem, 5vw, 3.75rem);
+  font-size: clamp(1.85rem, 3.8vw, 3rem);
   font-weight: 800;
-  line-height: 1.15;
-  letter-spacing: -0.03em;
+  line-height: 1.18;
+  letter-spacing: -0.02em;
   color: #0c111d;
   text-align: center;
   margin: 0;
-  white-space: nowrap;
 }
 @media (min-width: 1024px) {
   .hero-headline { text-align: start; }
@@ -101,7 +119,7 @@
   line-height: 1.65;
   color: #475467;
   text-align: center;
-  max-width: 520px;
+  max-width: 500px;
   margin-top: 20px;
   margin-bottom: 32px;
   margin-left: auto;
@@ -161,7 +179,14 @@
 .trust-label { color: #667085; font-weight: 500; }
 
 .visual-col { order: 2; width: 100%; }
-@media (min-width: 1024px) { .visual-col { order: 1; flex: 1 1 0%; min-width: 0; max-width: 52%; } }
+@media (min-width: 1024px) { 
+  .visual-col { 
+    order: 1; 
+    flex: 1 1 52%; 
+    max-width: 52%; 
+    min-width: 0; 
+  } 
+}
 
 .visual-float-layer { animation: float-y 6s ease-in-out infinite; will-change: transform; }
 @keyframes float-y { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
@@ -198,12 +223,14 @@
   box-shadow: 0 0 0 1px #ffffffd9, 0 4px 8px #0000000a, 0 12px 32px #00000017, 0 32px 64px #0000001a;
   transform: perspective(1400px) rotateY(-3deg) rotateX(1.5deg);
   transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.5s ease;
+  width: 100%;
+  max-width: 100%;
 }
 .mockup-frame:hover {
   transform: perspective(1400px) rotateY(0) rotateX(0);
   box-shadow: 0 0 0 1px #ffffffe6, 0 4px 8px #0000000a, 0 20px 48px #0000001c, 0 40px 80px #0000001a;
 }
-.mockup-img { display: block; width: 100%; height: auto; }
+.mockup-img { display: block; width: 100%; max-width: 100%; height: auto; }
 
 .float-badge {
   position: absolute; z-index: 3; pointer-events: none;
