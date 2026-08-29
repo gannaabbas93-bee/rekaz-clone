@@ -16,6 +16,69 @@
         </div>
       } @else {
         <form [formGroup]="bookingForm" (ngSubmit)="onSubmit()" class="booking-form" novalidate>
+          <!-- Live .NET Availability Checker Section -->
+          <div class="availability-box">
+            <div class="availability-title-row">
+              <span class="net-pill">⚡ Powered by .NET 10 API</span>
+              <h3 class="avail-heading">{{ ts.currentLang() === 'ar' ? 'فحص المواعيد المتاحة' : 'Check Available Slots' }}</h3>
+            </div>
+
+            <div class="availability-inputs-grid">
+              <!-- Service Selector -->
+              <div class="form-group inline-field">
+                <label class="form-label">
+                  {{ ts.currentLang() === 'ar' ? 'الخدمة المطلوبة' : 'Select Service' }}
+                </label>
+                <select class="form-input select-input" [value]="selectedServiceId()" (change)="onServiceChange($event)">
+                  <option *ngFor="let s of services" [value]="s.id">
+                    {{ ts.currentLang() === 'ar' ? s.nameAr : s.nameEn }}
+                  </option>
+                </select>
+              </div>
+
+              <!-- Date Picker -->
+              <div class="form-group inline-field">
+                <label class="form-label">
+                  {{ ts.currentLang() === 'ar' ? 'تاريخ الحجز' : 'Booking Date' }}
+                </label>
+                <input type="date" class="form-input date-input" [value]="selectedDate()" (change)="onDateChange($event)">
+              </div>
+            </div>
+
+            <!-- Action Button -->
+            <button type="button" class="check-slots-btn" (click)="checkAvailability()" [disabled]="isCheckingSlots()">
+              <span *ngIf="!isCheckingSlots()">🔍 {{ ts.currentLang() === 'ar' ? 'عرض المواعيد المتاحة' : 'Show Available Slots' }}</span>
+              <span *ngIf="isCheckingSlots()">⌛ {{ ts.currentLang() === 'ar' ? 'جاري الاتصال بـ .NET Backend...' : 'Checking .NET Backend...' }}</span>
+            </button>
+
+            <!-- Slots Result Container -->
+            <div class="slots-result-card" *ngIf="hasSearchedSlots()">
+              <div class="slots-header" *ngIf="slotsMessage()">
+                <span class="slots-subtitle">{{ slotsMessage() }}</span>
+              </div>
+
+              <div class="slots-error" *ngIf="slotsError()">
+                ⚠️ {{ slotsError() }}
+              </div>
+
+              <div class="slots-chips-grid" *ngIf="availableSlots().length > 0">
+                <button type="button" 
+                        *ngFor="let slot of availableSlots()" 
+                        class="slot-chip" 
+                        [class.selected-chip]="selectedSlot() === slot"
+                        (click)="selectSlot(slot)">
+                  🕒 {{ slot }}
+                </button>
+              </div>
+
+              <div class="selected-slot-feedback" *ngIf="selectedSlot()">
+                ✨ {{ ts.currentLang() === 'ar' ? 'الموعد المحدد للحجز:' : 'Selected Booking Time:' }} <strong>{{ selectedSlot() }}</strong>
+              </div>
+            </div>
+          </div>
+
+          <hr class="form-divider" />
+
           <!-- Full Name -->
           <div class="form-group">
             <label class="form-label" for="fullName">
@@ -157,6 +220,7 @@
             <span class="btn-arrow" [class.rtl-arrow]="ts.currentLang() === 'ar'">➔</span>
           </button>
         </form>
+
       }
 
       <!-- Trust Proof / Rating -->

@@ -20,14 +20,33 @@ export interface HomeResponse {
   backendVersion: string;
 }
 
+export interface AvailabilityResponse {
+  serviceId: number;
+  date: string;
+  availableSlots: string[];
+  messageAr: string;
+  messageEn: string;
+  serverTime: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:5189/api/home';
+  private baseUrl = 'http://localhost:5189/api';
 
   getHomeData(): Observable<HomeResponse> {
-    return this.http.get<HomeResponse>(this.apiUrl);
+    return this.http.get<HomeResponse>(`${this.baseUrl}/home`);
+  }
+
+  getAvailability(serviceId: number, date: string): Observable<AvailabilityResponse> {
+    return this.http.get<AvailabilityResponse>(`${this.baseUrl}/availability`, {
+      params: {
+        serviceId: serviceId.toString(),
+        date: date
+      }
+    });
   }
 }
+

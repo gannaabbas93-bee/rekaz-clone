@@ -1,6 +1,8 @@
 import { Component, inject, signal, computed, HostListener, ElementRef } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { TranslationService } from '../../services/translation.service';
+import { ApiService, AvailabilityResponse } from '../../services/api.service';
 
 export interface Country {
   code: string;
@@ -8,16 +10,40 @@ export interface Country {
   flag: string;
 }
 
+export interface ServiceOption {
+  id: number;
+  nameAr: string;
+  nameEn: string;
+}
+
 @Component({
   selector: 'app-booking-form',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './booking-form.html',
   styleUrl: './booking-form.scss'
 })
 export class BookingFormComponent {
   readonly ts = inject(TranslationService);
+  private apiService = inject(ApiService);
   private elementRef = inject(ElementRef);
+
+  services: ServiceOption[] = [
+    { id: 1, nameAr: 'إدارة الحجوزات', nameEn: 'Bookings Management' },
+    { id: 2, nameAr: 'إدارة الاشتراكات', nameEn: 'Memberships Management' },
+    { id: 3, nameAr: 'تقارير وأداء', nameEn: 'Reports & Analytics' },
+    { id: 4, nameAr: 'دعم الدفع الإلكتروني', nameEn: 'Online Payments' }
+  ];
+
+  selectedServiceId = signal<number>(1);
+  selectedDate = signal<string>('2026-08-30');
+
+  availableSlots = signal<string[]>([]);
+  selectedSlot = signal<string | null>(null);
+  isCheckingSlots = signal<boolean>(false);
+  slotsMessage = signal<string | null>(null);
+  slotsError = signal<string | null>(null);
+  hasSearchedSlots = signal<boolean>(false);
 
   countries: Country[] = [
     // Top 9 initial list matching screenshot
@@ -101,6 +127,43 @@ export class BookingFormComponent {
     phone: new FormControl('', [Validators.required, Validators.pattern('^[0-9]{7,15}$')])
   });
 
+  onServiceChange(event: Event): void {
+    const select = event.target as HTMLSelectElement;
+    this.selectedServiceId.set(Number(select.value));
+    this.selectedSlot.set(null);
+  }
+
+  onDateChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.selectedDate.set(input.value);
+    this.selectedSlot.set(null);
+  }
+
+  checkAvailability(): void {
+    this.isCheckingSlots.set(true);
+    this.slotsError.set(null);
+    this.hasSearchedSlots.set(true);
+
+    this.apiService.getAvailability(this.selectedServiceId(), this.selectedDate()).subscribe({
+      next: (res: AvailabilityResponse) => {
+        this.availableSlots.set(res.availableSlots);
+        this.slotsMessage.set(this.ts.currentLang() === 'ar' ? res.messageAr : res.messageEn);
+        this.isCheckingSlots.set(false);
+      },
+      error: (err) => {
+        console.error('Error fetching availability:', err);
+        this.slotsError.set(this.ts.currentLang() === 'ar' 
+          ? 'تعذر الاتصال بالخادم (.NET API /api/availability)' 
+          : 'Could not connect to .NET API');
+        this.isCheckingSlots.set(false);
+      }
+    });
+  }
+
+  selectSlot(slot: string): void {
+    this.selectedSlot.set(slot);
+  }
+
   toggleDropdown(event: MouseEvent): void {
     if (event) event.stopPropagation();
     const nextState = !this.isDropdownOpen();
@@ -147,7 +210,9 @@ export class BookingFormComponent {
     setTimeout(() => {
       this.isSuccess.set(false);
       this.submitted.set(false);
+      this.selectedSlot.set(null);
       this.bookingForm.reset();
     }, 4000);
   }
 }
+
