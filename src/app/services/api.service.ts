@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, retry } from 'rxjs';
+import { Observable, retry, map } from 'rxjs';
 
 export interface ServiceItem {
   id: number;
@@ -10,14 +10,12 @@ export interface ServiceItem {
   descriptionAr: string;
 }
 
-export interface HomeResponse {
-  titleAr: string;
-  titleEn: string;
-  messageAr: string;
-  messageEn: string;
+export interface HomeDataResponse {
+  headline: string;
+  subtitle: string;
+  rotatingWords: string[];
   services: ServiceItem[];
-  serverTime: string;
-  backendVersion: string;
+  availableSlots: string[];
 }
 
 export interface AvailabilityResponse {
@@ -36,21 +34,30 @@ export class ApiService {
   private http = inject(HttpClient);
   private readonly apiUrl = 'https://rekazapi-production.up.railway.app/api';
 
-  getHomeData(): Observable<HomeResponse> {
-    return this.http.get<HomeResponse>(`${this.apiUrl}/home`).pipe(
+  getHomeData(serviceId?: number, date?: string): Observable<HomeDataResponse> {
+    const params: any = {};
+    if (serviceId !== undefined && serviceId !== null) {
+      params.serviceId = serviceId.toString();
+    }
+    if (date) {
+      params.date = date;
+    }
+
+    return this.http.get<HomeDataResponse>(`${this.apiUrl}/home`, { params }).pipe(
       retry({ count: 2, delay: 1000 })
     );
   }
 
   getAvailability(serviceId: number, date: string): Observable<AvailabilityResponse> {
-    return this.http.get<AvailabilityResponse>(`${this.apiUrl}/availability`, {
-      params: {
-        serviceId: serviceId.toString(),
-        date: date
-      }
-    }).pipe(
-      retry({ count: 2, delay: 1000 })
+    return this.getHomeData(serviceId, date).pipe(
+      map((homeData: HomeDataResponse) => ({
+        serviceId,
+        date,
+        availableSlots: homeData.availableSlots,
+        messageAr: `المواعيد المتاحة بتاريخ ${date}`,
+        messageEn: `Available slots on ${date}`,
+        serverTime: new Date().toISOString()
+      }))
     );
   }
 }
-

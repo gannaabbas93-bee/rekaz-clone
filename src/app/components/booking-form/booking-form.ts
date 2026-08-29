@@ -2,7 +2,7 @@ import { Component, inject, signal, computed, HostListener, ElementRef } from '@
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { TranslationService } from '../../services/translation.service';
-import { ApiService, AvailabilityResponse } from '../../services/api.service';
+import { ApiService, HomeDataResponse } from '../../services/api.service';
 
 export interface Country {
   code: string;
@@ -144,16 +144,20 @@ export class BookingFormComponent {
     this.slotsError.set(null);
     this.hasSearchedSlots.set(true);
 
-    this.apiService.getAvailability(this.selectedServiceId(), this.selectedDate()).subscribe({
-      next: (res: AvailabilityResponse) => {
+    this.apiService.getHomeData(this.selectedServiceId(), this.selectedDate()).subscribe({
+      next: (res: HomeDataResponse) => {
         this.availableSlots.set(res.availableSlots);
-        this.slotsMessage.set(this.ts.currentLang() === 'ar' ? res.messageAr : res.messageEn);
+        this.slotsMessage.set(
+          this.ts.currentLang() === 'ar' 
+            ? `المواعيد المتاحة بتاريخ ${this.selectedDate()}` 
+            : `Available slots on ${this.selectedDate()}`
+        );
         this.isCheckingSlots.set(false);
       },
       error: (err) => {
         console.error('Error fetching availability:', err);
         this.slotsError.set(this.ts.currentLang() === 'ar' 
-          ? 'تعذر الاتصال بالخادم (.NET API /api/availability)' 
+          ? 'تعذر الاتصال بالخادم (.NET API /api/home)' 
           : 'Could not connect to .NET API');
         this.isCheckingSlots.set(false);
       }
