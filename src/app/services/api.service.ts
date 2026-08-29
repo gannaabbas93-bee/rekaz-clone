@@ -34,14 +34,14 @@ export interface AvailabilityResponse {
 })
 export class ApiService {
   private http = inject(HttpClient);
-  private baseUrl = 'http://localhost:5189/api';
+  private readonly apiUrl = 'https://rekazapi-production.up.railway.app/api';
 
   getHomeData(): Observable<HomeResponse> {
-    return this.http.get<HomeResponse>(`${this.baseUrl}/home`);
+    return this.http.get<HomeResponse>(`${this.apiUrl}/home`);
   }
 
   getAvailability(serviceId: number, date: string): Observable<AvailabilityResponse> {
-    return this.http.get<AvailabilityResponse>(`${this.baseUrl}/availability`, {
+    return this.http.get<AvailabilityResponse>(`${this.apiUrl}/availability`, {
       params: {
         serviceId: serviceId.toString(),
         date: date
