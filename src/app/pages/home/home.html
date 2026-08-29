@@ -1,11 +1,66 @@
 <app-navbar></app-navbar>
+
+<!-- Main Banner & Hero -->
 <app-hero></app-hero>
+
+<!-- Backend Integration Section -->
+<section class="backend-showcase-section" [dir]="ts.currentLang() === 'ar' ? 'rtl' : 'ltr'">
+  <div class="container">
+    <div class="backend-card">
+      <div class="backend-header">
+        <div class="status-indicator" [class.connected]="homeData()" [class.error]="error()">
+          <span class="dot"></span>
+          <span class="status-text" *ngIf="isLoading()">{{ ts.currentLang() === 'ar' ? 'جاري الاتصال بالـ Backend...' : 'Connecting to .NET Backend...' }}</span>
+          <span class="status-text" *ngIf="homeData()">{{ ts.currentLang() === 'ar' ? 'متصل بالـ .NET Backend بنجاح (/api/home)' : 'Connected to .NET Backend (/api/home)' }}</span>
+          <span class="status-text" *ngIf="error()">{{ error() }}</span>
+        </div>
+        <button class="retry-btn" *ngIf="error()" (click)="fetchBackendData()">
+          🔄 {{ ts.currentLang() === 'ar' ? 'إعادة المحاولة' : 'Retry' }}
+        </button>
+      </div>
+
+      <div class="backend-body" *ngIf="homeData() as data">
+        <div class="dynamic-welcome">
+          <span class="api-badge">.NET 10 Web API Live Data</span>
+          <h2 class="dynamic-title">{{ currentTitle }}</h2>
+          <p class="dynamic-subtitle">{{ currentMessage }}</p>
+        </div>
+
+        <div class="services-headline">
+          <h3>{{ ts.currentLang() === 'ar' ? 'الخدمات المحمّلة ديناميكيًا من Backend:' : 'Services Loaded Dynamically from Backend:' }}</h3>
+        </div>
+
+        <div class="services-grid">
+          <div class="service-card" *ngFor="let service of data.services">
+            <div class="service-icon">{{ service.icon }}</div>
+            <div class="service-info">
+              <h4 class="service-name">
+                {{ ts.currentLang() === 'ar' ? service.nameAr : service.nameEn }}
+              </h4>
+              <p class="service-desc" *ngIf="service.descriptionAr">
+                {{ service.descriptionAr }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="backend-footer">
+          <span class="meta-tag">⚡ {{ data.backendVersion }}</span>
+          <span class="meta-tag">🕒 {{ data.serverTime | date:'mediumTime' }}</span>
+          <span class="meta-tag">🔗 http://localhost:5189/api/home</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <app-booking-form></app-booking-form>
 <app-industries-grid></app-industries-grid>
 
 <main class="home-container">
-  <!-- Additional page content will be added here -->
+  <!-- Additional page content -->
 </main>
 
 <app-floating-video-card></app-floating-video-card>
 <app-whatsapp-button></app-whatsapp-button>
+
