@@ -625,3 +625,141 @@
   margin: 1.5rem 0;
 }
 
+.booking-tabs-nav {
+  display: flex;
+  gap: 8px;
+  background: #f8fafc;
+  padding: 6px;
+  border-radius: 14px;
+  margin-bottom: 24px;
+  border: 1px solid #e2e8f0;
+
+  .tab-btn {
+    flex: 1;
+    padding: 10px 16px;
+    border: none;
+    background: transparent;
+    border-radius: 10px;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+
+    &:hover {
+      color: #0f172a;
+      background: rgba(255, 255, 255, 0.5);
+    }
+
+    &.active {
+      background: #ffffff;
+      color: #0f172a;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+    }
+  }
+}
+
+.history-tracking-container {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+
+  .history-header {
+    text-align: center;
+    h3 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin: 8px 0 4px;
+    }
+    p {
+      font-size: 0.875rem;
+      color: #64748b;
+    }
+  }
+
+  .history-search-box {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: #f8fafc;
+    padding: 16px;
+    border-radius: 14px;
+    border: 1px solid #e2e8f0;
+
+    .search-history-btn {
+      width: 100%;
+      margin-top: 4px;
+    }
+  }
+
+  .history-cards-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 12px;
+  }
+
+  .history-card-item {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 14px 16px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+    transition: transform 0.2s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      border-color: #cbd5e1;
+    }
+
+    .history-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 10px;
+      margin-bottom: 10px;
+      border-bottom: 1px dashed #e2e8f0;
+
+      .history-service-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.95rem;
+        color: #0f172a;
+      }
+
+      .booking-id-tag {
+        font-size: 0.75rem;
+        font-weight: 700;
+        background: #f1f5f9;
+        color: #475569;
+        padding: 2px 8px;
+        border-radius: 6px;
+      }
+    }
+
+    .history-card-body {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+
+      .history-info-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.85rem;
+
+        .info-label {
+          color: #64748b;
+        }
+
+        .info-value {
+          font-weight: 600;
+          color: #1e293b;
+        }
+      }
+    }
+  }
+}
+

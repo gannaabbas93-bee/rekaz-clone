@@ -8,219 +8,291 @@
 
     <!-- Form Card -->
     <div class="booking-card">
-      @if (isSuccess()) {
-        <div class="success-message">
-          <div class="success-icon">✓</div>
-          <h3>{{ ts.currentLang() === 'ar' ? 'تم استلام طلبك بنجاح!' : 'Request received successfully!' }}</h3>
-          <p>{{ ts.currentLang() === 'ar' ? 'سيتواصل معك فريقنا في أقرب وقت ممكن.' : 'Our team will get in touch with you shortly.' }}</p>
-        </div>
-      } @else {
-        <form [formGroup]="bookingForm" (ngSubmit)="onSubmit()" class="booking-form" novalidate>
-          <!-- Live .NET Availability Checker Section -->
-          <div class="availability-box">
-            <div class="availability-title-row">
-              <span class="net-pill">⚡ Powered by .NET 10 API</span>
-              <h3 class="avail-heading">{{ ts.currentLang() === 'ar' ? 'فحص المواعيد المتاحة' : 'Check Available Slots' }}</h3>
+      <!-- Navigation Tabs -->
+      <div class="booking-tabs-nav">
+        <button type="button" class="tab-btn" [class.active]="activeTab() === 'book'" (click)="switchTab('book')">
+          <span>📅 {{ ts.currentLang() === 'ar' ? 'طلب حجز جديد' : 'New Booking' }}</span>
+        </button>
+        <button type="button" class="tab-btn" [class.active]="activeTab() === 'history'" (click)="switchTab('history')">
+          <span>🔍 {{ ts.currentLang() === 'ar' ? 'متابعة حجوزاتي' : 'Track My Bookings' }}</span>
+        </button>
+      </div>
+
+      @if (activeTab() === 'book') {
+        @if (isSuccess()) {
+          <div class="success-message">
+            <div class="success-icon">✓</div>
+            <h3>{{ ts.currentLang() === 'ar' ? 'تم استلام طلبك بنجاح!' : 'Request received successfully!' }}</h3>
+            <p>{{ ts.currentLang() === 'ar' ? 'سيتواصل معك فريقنا في أقرب وقت ممكن.' : 'Our team will get in touch with you shortly.' }}</p>
+          </div>
+        } @else {
+          <form [formGroup]="bookingForm" (ngSubmit)="onSubmit()" class="booking-form" novalidate>
+            <!-- Live .NET Availability Checker Section -->
+            <div class="availability-box">
+              <div class="availability-title-row">
+                <span class="net-pill">⚡ Powered by .NET 10 API</span>
+                <h3 class="avail-heading">{{ ts.currentLang() === 'ar' ? 'فحص المواعيد المتاحة' : 'Check Available Slots' }}</h3>
+              </div>
+
+              <div class="availability-inputs-grid">
+                <!-- Service Selector -->
+                <div class="form-group inline-field">
+                  <label class="form-label">
+                    {{ ts.currentLang() === 'ar' ? 'الخدمة المطلوبة' : 'Select Service' }}
+                  </label>
+                  <select class="form-input select-input" [value]="selectedServiceId()" (change)="onServiceChange($event)">
+                    @for (s of services(); track s.id) {
+                      <option [value]="s.id">
+                        {{ s.icon }} {{ ts.currentLang() === 'ar' ? s.nameAr : s.nameEn }}
+                      </option>
+                    }
+                  </select>
+                </div>
+
+                <!-- Date Picker -->
+                <div class="form-group inline-field">
+                  <label class="form-label">
+                    {{ ts.currentLang() === 'ar' ? 'تاريخ الحجز' : 'Booking Date' }}
+                  </label>
+                  <input type="date" class="form-input date-input" [value]="selectedDate()" (change)="onDateChange($event)">
+                </div>
+              </div>
+
+              <!-- Action Button -->
+              <button type="button" class="check-slots-btn" (click)="checkAvailability()" [disabled]="isCheckingSlots()">
+                <span *ngIf="!isCheckingSlots()">🔍 {{ ts.currentLang() === 'ar' ? 'عرض المواعيد المتاحة' : 'Show Available Slots' }}</span>
+                <span *ngIf="isCheckingSlots()">⌛ {{ ts.currentLang() === 'ar' ? 'جاري الاتصال بـ .NET Backend...' : 'Checking .NET Backend...' }}</span>
+              </button>
+
+              <!-- Slots Result Container -->
+              <div class="slots-result-card" *ngIf="hasSearchedSlots()">
+                <div class="slots-header" *ngIf="slotsMessage()">
+                  <span class="slots-subtitle">{{ slotsMessage() }}</span>
+                </div>
+
+                <div class="slots-error" *ngIf="slotsError()">
+                  ⚠️ {{ slotsError() }}
+                </div>
+
+                <div class="slots-chips-grid" *ngIf="availableSlots().length > 0">
+                  <button type="button" 
+                          *ngFor="let slot of availableSlots()" 
+                          class="slot-chip" 
+                          [class.selected-chip]="selectedSlot() === slot"
+                          (click)="selectSlot(slot)">
+                    🕒 {{ slot }}
+                  </button>
+                </div>
+
+                <div class="selected-slot-feedback" *ngIf="selectedSlot()">
+                  ✨ {{ ts.currentLang() === 'ar' ? 'الموعد المحدد للحجز:' : 'Selected Booking Time:' }} <strong>{{ selectedSlot() }}</strong>
+                </div>
+              </div>
             </div>
 
-            <div class="availability-inputs-grid">
-              <!-- Service Selector -->
-              <div class="form-group inline-field">
-                <label class="form-label">
-                  {{ ts.currentLang() === 'ar' ? 'الخدمة المطلوبة' : 'Select Service' }}
-                </label>
-                <select class="form-input select-input" [value]="selectedServiceId()" (change)="onServiceChange($event)">
-                  <option *ngFor="let s of services" [value]="s.id">
-                    {{ ts.currentLang() === 'ar' ? s.nameAr : s.nameEn }}
-                  </option>
-                </select>
-              </div>
+            <hr class="form-divider" />
 
-              <!-- Date Picker -->
-              <div class="form-group inline-field">
-                <label class="form-label">
-                  {{ ts.currentLang() === 'ar' ? 'تاريخ الحجز' : 'Booking Date' }}
-                </label>
-                <input type="date" class="form-input date-input" [value]="selectedDate()" (change)="onDateChange($event)">
-              </div>
+            <!-- Full Name -->
+            <div class="form-group">
+              <label class="form-label" for="fullName">
+                {{ ts.t().bookingForm.fullNameLabel }}
+                <span class="required-asterisk">*</span>
+              </label>
+              <input 
+                type="text" 
+                id="fullName" 
+                formControlName="fullName"
+                class="form-input" 
+                [class.is-invalid]="submitted() && bookingForm.controls.fullName.invalid"
+                [placeholder]="ts.t().bookingForm.fullNamePlaceholder"
+              >
+              @if (submitted() && bookingForm.controls.fullName.invalid) {
+                <span class="error-message">{{ ts.t().bookingForm.nameRequired }}</span>
+              }
             </div>
 
-            <!-- Action Button -->
-            <button type="button" class="check-slots-btn" (click)="checkAvailability()" [disabled]="isCheckingSlots()">
-              <span *ngIf="!isCheckingSlots()">🔍 {{ ts.currentLang() === 'ar' ? 'عرض المواعيد المتاحة' : 'Show Available Slots' }}</span>
-              <span *ngIf="isCheckingSlots()">⌛ {{ ts.currentLang() === 'ar' ? 'جاري الاتصال بـ .NET Backend...' : 'Checking .NET Backend...' }}</span>
-            </button>
-
-            <!-- Slots Result Container -->
-            <div class="slots-result-card" *ngIf="hasSearchedSlots()">
-              <div class="slots-header" *ngIf="slotsMessage()">
-                <span class="slots-subtitle">{{ slotsMessage() }}</span>
-              </div>
-
-              <div class="slots-error" *ngIf="slotsError()">
-                ⚠️ {{ slotsError() }}
-              </div>
-
-              <div class="slots-chips-grid" *ngIf="availableSlots().length > 0">
-                <button type="button" 
-                        *ngFor="let slot of availableSlots()" 
-                        class="slot-chip" 
-                        [class.selected-chip]="selectedSlot() === slot"
-                        (click)="selectSlot(slot)">
-                  🕒 {{ slot }}
-                </button>
-              </div>
-
-              <div class="selected-slot-feedback" *ngIf="selectedSlot()">
-                ✨ {{ ts.currentLang() === 'ar' ? 'الموعد المحدد للحجز:' : 'Selected Booking Time:' }} <strong>{{ selectedSlot() }}</strong>
-              </div>
+            <!-- Business Type -->
+            <div class="form-group">
+              <label class="form-label" for="businessType">
+                {{ ts.t().bookingForm.businessTypeLabel }}
+                <span class="required-asterisk">*</span>
+              </label>
+              <input 
+                type="text" 
+                id="businessType" 
+                formControlName="businessType"
+                class="form-input" 
+                [class.is-invalid]="submitted() && bookingForm.controls.businessType.invalid"
+                [placeholder]="ts.t().bookingForm.businessTypePlaceholder"
+              >
+              @if (submitted() && bookingForm.controls.businessType.invalid) {
+                <span class="error-message">{{ ts.t().bookingForm.businessTypeRequired }}</span>
+              }
             </div>
-          </div>
 
-          <hr class="form-divider" />
+            <!-- Phone Number with Searchable Multi-Country Dropdown -->
+            <div class="form-group">
+              <label class="form-label" for="phoneNumber">
+                {{ ts.t().bookingForm.phoneLabel }}
+                <span class="required-asterisk">*</span>
+              </label>
+              <div class="phone-input-container" dir="ltr">
+                <div class="phone-prefix-wrapper">
+                  <button 
+                    type="button" 
+                    class="phone-prefix-box"
+                    (click)="toggleDropdown($event)"
+                    aria-label="Select country code"
+                    [attr.aria-expanded]="isDropdownOpen()"
+                  >
+                    <span class="flag-wrapper">
+                      <img [src]="selectedCountry().flag" [alt]="selectedCountry().name" class="flag-img" />
+                    </span>
+                    <span class="dial-code-text">{{ selectedCountry().code }}</span>
+                    <svg class="chevron-dual" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
+                    </svg>
+                  </button>
 
-          <!-- Full Name -->
-          <div class="form-group">
-            <label class="form-label" for="fullName">
-              {{ ts.t().bookingForm.fullNameLabel }}
-              <span class="required-asterisk">*</span>
-            </label>
-            <input 
-              type="text" 
-              id="fullName" 
-              formControlName="fullName"
-              class="form-input" 
-              [class.is-invalid]="submitted() && bookingForm.controls.fullName.invalid"
-              [placeholder]="ts.t().bookingForm.fullNamePlaceholder"
-            >
-            @if (submitted() && bookingForm.controls.fullName.invalid) {
-              <span class="error-message">{{ ts.t().bookingForm.nameRequired }}</span>
-            }
-          </div>
+                  <!-- Searchable Country Dropdown Menu -->
+                  @if (isDropdownOpen()) {
+                    <div class="country-dropdown-menu" [class.open-upwards]="openUpwards()">
+                      <!-- Top Search Box -->
+                      <div class="dropdown-search-box">
+                        <svg class="search-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        <input 
+                          type="text" 
+                          placeholder="Search country" 
+                          class="search-input" 
+                          [value]="searchQuery()"
+                          (input)="filterCountries($event)" 
+                          (click)="$event.stopPropagation()"
+                        />
+                      </div>
 
-          <!-- Business Type -->
-          <div class="form-group">
-            <label class="form-label" for="businessType">
-              {{ ts.t().bookingForm.businessTypeLabel }}
-              <span class="required-asterisk">*</span>
-            </label>
-            <input 
-              type="text" 
-              id="businessType" 
-              formControlName="businessType"
-              class="form-input" 
-              [class.is-invalid]="submitted() && bookingForm.controls.businessType.invalid"
-              [placeholder]="ts.t().bookingForm.businessTypePlaceholder"
-            >
-            @if (submitted() && bookingForm.controls.businessType.invalid) {
-              <span class="error-message">{{ ts.t().bookingForm.businessTypeRequired }}</span>
-            }
-          </div>
+                      <!-- Scrollable Country List -->
+                      <div class="country-list-scroll">
+                        @for (country of filteredCountries(); track country.name) {
+                          <div 
+                            class="dropdown-item" 
+                            [class.selected]="country.name === selectedCountry().name"
+                            (click)="selectCountry(country, $event)"
+                          >
+                            <div class="item-left">
+                              <span class="flag-wrapper">
+                                <img [src]="country.flag" [alt]="country.name" class="flag-img" />
+                              </span>
+                              <span class="country-name">{{ country.name }}</span>
+                            </div>
+                            <div class="item-right">
+                              <span class="country-code-text">{{ country.code }}</span>
+                              @if (country.name === selectedCountry().name) {
+                                <svg class="check-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                                </svg>
+                              }
+                            </div>
+                          </div>
+                        } @empty {
+                          <div class="no-results">
+                            {{ ts.currentLang() === 'ar' ? 'لا توجد نتائج' : 'No country found' }}
+                          </div>
+                        }
+                      </div>
+                    </div>
+                  }
+                </div>
 
-          <!-- Phone Number with Searchable Multi-Country Dropdown -->
-          <div class="form-group">
-            <label class="form-label" for="phoneNumber">
-              {{ ts.t().bookingForm.phoneLabel }}
-              <span class="required-asterisk">*</span>
-            </label>
-            <div class="phone-input-container" dir="ltr">
-              <div class="phone-prefix-wrapper">
-                <button 
-                  type="button" 
-                  class="phone-prefix-box"
-                  (click)="toggleDropdown($event)"
-                  aria-label="Select country code"
-                  [attr.aria-expanded]="isDropdownOpen()"
+                <input 
+                  type="tel" 
+                  id="phoneNumber" 
+                  formControlName="phone"
+                  class="form-input phone-input" 
+                  [class.is-invalid]="submitted() && bookingForm.controls.phone.invalid"
+                  [placeholder]="ts.t().bookingForm.phonePlaceholder"
                 >
-                  <span class="flag-wrapper">
-                    <img 
-                      [src]="selectedCountry().flag" 
-                      [alt]="selectedCountry().name" 
-                      class="flag-img" 
-                    />
-                  </span>
-                  <span class="dial-code-text">{{ selectedCountry().code }}</span>
-                  <svg class="chevron-dual" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
-                  </svg>
-                </button>
+              </div>
+              @if (submitted() && bookingForm.controls.phone.invalid) {
+                @if (bookingForm.controls.phone.errors?.['required']) {
+                  <span class="error-message">{{ ts.t().bookingForm.phoneRequired }}</span>
+                } @else {
+                  <span class="error-message">{{ ts.t().bookingForm.phoneInvalid }}</span>
+                }
+              }
+            </div>
 
-                <!-- Searchable Country Dropdown Menu -->
-                @if (isDropdownOpen()) {
-                  <div class="country-dropdown-menu" [class.open-upwards]="openUpwards()">
-                    <!-- Top Search Box -->
-                    <div class="dropdown-search-box">
-                      <svg class="search-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                      </svg>
-                      <input 
-                        type="text" 
-                        placeholder="Search country" 
-                        class="search-input" 
-                        [value]="searchQuery()"
-                        (input)="filterCountries($event)" 
-                        (click)="$event.stopPropagation()"
-                      />
+            <!-- Submit Button -->
+            <button type="submit" class="submit-btn">
+              <span>{{ ts.t().bookingForm.submitButton }}</span>
+              <span class="btn-arrow" [class.rtl-arrow]="ts.currentLang() === 'ar'">➔</span>
+            </button>
+          </form>
+        }
+      } @else {
+        <!-- Track My Booking UI Section -->
+        <div class="history-tracking-container">
+          <div class="history-header">
+            <span class="net-pill">⚡ Direct EF Core API Query</span>
+            <h3>{{ ts.currentLang() === 'ar' ? 'استعلام عن سجل الحجوزات السابق' : 'Search Your Booking History' }}</h3>
+            <p>{{ ts.currentLang() === 'ar' ? 'أدخل رقم هاتفك لاستعراض تفاصيل كافة الحجوزات المسجلة باسمك' : 'Enter your phone number to fetch all recorded bookings' }}</p>
+          </div>
+
+          <div class="history-search-box">
+            <div class="form-group inline-field">
+              <label class="form-label">{{ ts.currentLang() === 'ar' ? 'رقم الهاتف' : 'Phone Number' }}</label>
+              <input type="tel" class="form-input" [value]="searchPhone()" (input)="onSearchPhoneChange($event)" [placeholder]="ts.currentLang() === 'ar' ? 'مثال: 0501234567' : 'e.g. 0501234567'">
+            </div>
+            <button type="button" class="check-slots-btn search-history-btn" (click)="trackHistory()" [disabled]="isLoadingHistory()">
+              <span *ngIf="!isLoadingHistory()">🔍 {{ ts.currentLang() === 'ar' ? 'بحث عن الحجوزات' : 'Find Bookings' }}</span>
+              <span *ngIf="isLoadingHistory()">⌛ {{ ts.currentLang() === 'ar' ? 'جاري الاستعلام من الداتابيز...' : 'Querying Database...' }}</span>
+            </button>
+          </div>
+
+          <div class="history-results-area" *ngIf="hasSearchedHistory()">
+            <div class="slots-error" *ngIf="historyError()">
+              ⚠️ {{ historyError() }}
+            </div>
+
+            @if (!historyError() && bookingHistory().length > 0) {
+              <div class="history-cards-list">
+                @for (b of bookingHistory(); track b.id) {
+                  <div class="history-card-item">
+                    <div class="history-card-header">
+                      <div class="history-service-title">
+                        <span class="service-icon">{{ b.serviceIcon }}</span>
+                        <strong>{{ ts.currentLang() === 'ar' ? b.serviceNameAr : b.serviceNameEn }}</strong>
+                      </div>
+                      <span class="booking-id-tag">#{{ b.id }}</span>
                     </div>
 
-                    <!-- Scrollable Country List -->
-                    <div class="country-list-scroll">
-                      @for (country of filteredCountries(); track country.name) {
-                        <div 
-                          class="dropdown-item" 
-                          [class.selected]="country.name === selectedCountry().name"
-                          (click)="selectCountry(country, $event)"
-                        >
-                          <div class="item-left">
-                            <span class="flag-wrapper">
-                              <img [src]="country.flag" [alt]="country.name" class="flag-img" />
-                            </span>
-                            <span class="country-name">{{ country.name }}</span>
-                          </div>
-                          <div class="item-right">
-                            <span class="country-code-text">{{ country.code }}</span>
-                            @if (country.name === selectedCountry().name) {
-                              <svg class="check-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
-                              </svg>
-                            }
-                          </div>
-                        </div>
-                      } @empty {
-                        <div class="no-results">
-                          {{ ts.currentLang() === 'ar' ? 'لا توجد نتائج' : 'No country found' }}
-                        </div>
-                      }
+                    <div class="history-card-body">
+                      <div class="history-info-row">
+                        <span class="info-label">👤 {{ ts.currentLang() === 'ar' ? 'الاسم:' : 'Name:' }}</span>
+                        <span class="info-value">{{ b.fullName }} ({{ b.businessType }})</span>
+                      </div>
+                      <div class="history-info-row">
+                        <span class="info-label">📅 {{ ts.currentLang() === 'ar' ? 'تاريخ الحجز:' : 'Booking Date:' }}</span>
+                        <span class="info-value">{{ b.bookingDate }} ({{ b.selectedSlot }})</span>
+                      </div>
+                      <div class="history-info-row">
+                        <span class="info-label">🕒 {{ ts.currentLang() === 'ar' ? 'تاريخ الإنشاء:' : 'Created:' }}</span>
+                        <span class="info-value">{{ b.createdAt | date:'medium' }}</span>
+                      </div>
                     </div>
                   </div>
                 }
               </div>
+            }
 
-              <input 
-                type="tel" 
-                id="phoneNumber" 
-                formControlName="phone"
-                class="form-input phone-input" 
-                [class.is-invalid]="submitted() && bookingForm.controls.phone.invalid"
-                [placeholder]="ts.t().bookingForm.phonePlaceholder"
-              >
-            </div>
-            @if (submitted() && bookingForm.controls.phone.invalid) {
-              @if (bookingForm.controls.phone.errors?.['required']) {
-                <span class="error-message">{{ ts.t().bookingForm.phoneRequired }}</span>
-              } @else {
-                <span class="error-message">{{ ts.t().bookingForm.phoneInvalid }}</span>
-              }
+            @if (!historyError() && bookingHistory().length === 0) {
+              <div class="no-slots">
+                {{ ts.currentLang() === 'ar' ? 'لا توجد حجوزات مسجلة برقم الهاتف المدخل' : 'No bookings found for this phone number' }}
+              </div>
             }
           </div>
-
-          <!-- Submit Button -->
-          <button type="submit" class="submit-btn">
-            <span>{{ ts.t().bookingForm.submitButton }}</span>
-            <span class="btn-arrow" [class.rtl-arrow]="ts.currentLang() === 'ar'">➔</span>
-          </button>
-        </form>
-
+        </div>
       }
 
       <!-- Trust Proof / Rating -->

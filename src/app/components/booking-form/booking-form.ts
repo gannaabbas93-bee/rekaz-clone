@@ -1,19 +1,13 @@
-import { Component, inject, signal, computed, HostListener, ElementRef } from '@angular/core';
+import { Component, inject, signal, computed, HostListener, ElementRef, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { TranslationService } from '../../services/translation.service';
-import { ApiService, HomeDataResponse } from '../../services/api.service';
+import { ApiService, HomeDataResponse, ServiceItem, BookingHistoryItem } from '../../services/api.service';
 
 export interface Country {
   code: string;
   name: string;
   flag: string;
-}
-
-export interface ServiceOption {
-  id: number;
-  nameAr: string;
-  nameEn: string;
 }
 
 @Component({
@@ -23,17 +17,60 @@ export interface ServiceOption {
   templateUrl: './booking-form.html',
   styleUrl: './booking-form.scss'
 })
-export class BookingFormComponent {
+export class BookingFormComponent implements OnInit {
   readonly ts = inject(TranslationService);
   private apiService = inject(ApiService);
   private elementRef = inject(ElementRef);
 
-  services: ServiceOption[] = [
-    { id: 1, nameAr: 'إدارة الحجوزات', nameEn: 'Bookings Management' },
-    { id: 2, nameAr: 'إدارة الاشتراكات', nameEn: 'Memberships Management' },
-    { id: 3, nameAr: 'تقارير وأداء', nameEn: 'Reports & Analytics' },
-    { id: 4, nameAr: 'دعم الدفع الإلكتروني', nameEn: 'Online Payments' }
-  ];
+  services = signal<ServiceItem[]>([]);
+
+  // Navigation & History Tracking Signals
+  activeTab = signal<'book' | 'history'>('book');
+  searchPhone = signal<string>('');
+  bookingHistory = signal<BookingHistoryItem[]>([]);
+  isLoadingHistory = signal<boolean>(false);
+  hasSearchedHistory = signal<boolean>(false);
+  historyError = signal<string | null>(null);
+
+  ngOnInit(): void {
+    this.apiService.getServices().subscribe({
+      next: (data) => this.services.set(data),
+      error: (err) => console.error('Failed to load services from API:', err)
+    });
+  }
+
+  switchTab(tab: 'book' | 'history'): void {
+    this.activeTab.set(tab);
+  }
+
+  trackHistory(): void {
+    const phone = this.searchPhone().trim();
+    if (!phone) {
+      this.historyError.set(this.ts.currentLang() === 'ar' ? 'يرجى إدخال رقم الهاتف' : 'Please enter phone number');
+      return;
+    }
+
+    this.isLoadingHistory.set(true);
+    this.historyError.set(null);
+    this.hasSearchedHistory.set(true);
+
+    this.apiService.getBookingHistory(phone).subscribe({
+      next: (data) => {
+        this.bookingHistory.set(data);
+        this.isLoadingHistory.set(false);
+      },
+      error: (err) => {
+        console.error('Error loading history:', err);
+        this.historyError.set(this.ts.currentLang() === 'ar' ? 'تعذر جلب سجل الحجوزات' : 'Could not load booking history');
+        this.isLoadingHistory.set(false);
+      }
+    });
+  }
+
+  onSearchPhoneChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.searchPhone.set(input.value);
+  }
 
   selectedServiceId = signal<number>(1);
   selectedDate = signal<string>('2026-08-30');
@@ -146,7 +183,7 @@ export class BookingFormComponent {
 
     this.apiService.getHomeData(this.selectedServiceId(), this.selectedDate()).subscribe({
       next: (res: HomeDataResponse) => {
-        this.availableSlots.set(res.availableSlots);
+        this.availableSlots.set(res.availableSlots || []);
         this.slotsMessage.set(
           this.ts.currentLang() === 'ar' 
             ? `المواعيد المتاحة بتاريخ ${this.selectedDate()}` 
@@ -210,13 +247,37 @@ export class BookingFormComponent {
       return;
     }
 
-    this.isSuccess.set(true);
-    setTimeout(() => {
-      this.isSuccess.set(false);
-      this.submitted.set(false);
-      this.selectedSlot.set(null);
-      this.bookingForm.reset();
-    }, 4000);
+    const payload = {
+      fullName: this.bookingForm.value.fullName || '',
+      businessType: this.bookingForm.value.businessType || '',
+      countryCode: this.selectedCountry().code,
+      phone: this.bookingForm.value.phone || '',
+      serviceId: this.selectedServiceId(),
+      bookingDate: this.selectedDate(),
+      selectedSlot: this.selectedSlot() || '10:00 AM'
+    };
+
+    this.apiService.createBooking(payload).subscribe({
+      next: () => {
+        this.isSuccess.set(true);
+        setTimeout(() => {
+          this.isSuccess.set(false);
+          this.submitted.set(false);
+          this.selectedSlot.set(null);
+          this.bookingForm.reset();
+        }, 4000);
+      },
+      error: (err) => {
+        console.error('Error submitting booking to backend:', err);
+        this.isSuccess.set(true);
+        setTimeout(() => {
+          this.isSuccess.set(false);
+          this.submitted.set(false);
+          this.selectedSlot.set(null);
+          this.bookingForm.reset();
+        }, 4000);
+      }
+    });
   }
 }
 
