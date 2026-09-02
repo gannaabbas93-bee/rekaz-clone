@@ -22,7 +22,17 @@
         <span class="lang-code">{{ ts.t().navbar.langBtn }}</span>
       </button>
 
-      <a href="#" class="navbar__login">{{ ts.t().navbar.login }}</a>
+      <!-- Auth Controls -->
+      <ng-container *ngIf="!authService.isLoggedIn(); else userLoggedIn">
+        <button type="button" class="navbar__login" (click)="openLoginModal()">{{ ts.t().navbar.login }}</button>
+      </ng-container>
+
+      <ng-template #userLoggedIn>
+        <div class="user-profile-badge">
+          <span class="user-name">👤 {{ authService.userName() }}</span>
+          <button type="button" class="logout-btn" (click)="onLogout()" title="تسجيل الخروج">🚪</button>
+        </div>
+      </ng-template>
 
       <a href="#booking" class="navbar__cta">
         <span>{{ ts.t().navbar.startFree }}</span>
@@ -64,7 +74,16 @@
           <span>{{ ts.t().navbar.langName }}</span>
         </button>
 
-        <a href="#" class="navbar__login mobile-login-link" (click)="closeMobileMenu()">{{ ts.t().navbar.login }}</a>
+        <ng-container *ngIf="!authService.isLoggedIn(); else mobileUserLoggedIn">
+          <button type="button" class="navbar__login mobile-login-link" (click)="openLoginModal()">{{ ts.t().navbar.login }}</button>
+        </ng-container>
+
+        <ng-template #mobileUserLoggedIn>
+          <div class="mobile-user-badge">
+            <span>👤 {{ authService.userName() }}</span>
+            <button type="button" class="logout-btn" (click)="onLogout()">تسجيل الخروج</button>
+          </div>
+        </ng-template>
 
         <a href="#booking" class="navbar__cta mobile-cta-btn" (click)="closeMobileMenu()">
           <span>{{ ts.t().navbar.startFree }}</span>
@@ -74,3 +93,6 @@
     </div>
   </div>
 </header>
+
+<!-- Interactive Login Modal -->
+<app-login-modal *ngIf="isLoginModalOpen()" (closeModal)="closeLoginModal()"></app-login-modal>

@@ -1,0 +1,81 @@
+<div class="modal-overlay" (click)="onClose()">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+    <!-- Close Button -->
+    <button type="button" class="close-btn" (click)="onClose()" aria-label="Close">✕</button>
+
+    <!-- Modal Header -->
+    <div class="modal-header">
+      <div class="brand-badge">🔐 Rekaz Auth</div>
+      <h2>{{ mode() === 'login' ? (ts.currentLang() === 'ar' ? 'تسجيل الدخول' : 'Sign In') : (ts.currentLang() === 'ar' ? 'إنشاء حساب جديد' : 'Create Account') }}</h2>
+      <p>{{ mode() === 'login' ? (ts.currentLang() === 'ar' ? 'أدخل بياناتك للوصول إلى لوحة الحجوزات والخدمات' : 'Enter your credentials to access your dashboard') : (ts.currentLang() === 'ar' ? 'سجل بياناتك للبدء في استخدام منصة ركاز الذكية' : 'Register to get started with Rekaz platform') }}</p>
+    </div>
+
+    <!-- Mode Selector Tabs -->
+    <div class="mode-tabs">
+      <button type="button" class="mode-tab" [class.active]="mode() === 'login'" (click)="switchMode('login')">
+        {{ ts.currentLang() === 'ar' ? 'تسجيل الدخول' : 'Login' }}
+      </button>
+      <button type="button" class="mode-tab" [class.active]="mode() === 'register'" (click)="switchMode('register')">
+        {{ ts.currentLang() === 'ar' ? 'إنشاء حساب' : 'Register' }}
+      </button>
+    </div>
+
+    <!-- Feedback Alerts -->
+    @if (errorMessage()) {
+      <div class="alert alert-error">
+        ⚠️ {{ errorMessage() }}
+      </div>
+    }
+
+    @if (successMessage()) {
+      <div class="alert alert-success">
+        ✓ {{ successMessage() }}
+      </div>
+    }
+
+    <!-- Login Form -->
+    @if (mode() === 'login') {
+      <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="auth-form">
+        <div class="form-group">
+          <label class="form-label">{{ ts.currentLang() === 'ar' ? 'البريد الإلكتروني' : 'Email Address' }}</label>
+          <input type="email" formControlName="email" class="form-input" placeholder="admin@rekaz.com">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">{{ ts.currentLang() === 'ar' ? 'كلمة المرور' : 'Password' }}</label>
+          <input type="password" formControlName="password" class="form-input" placeholder="••••••••">
+        </div>
+
+        <button type="submit" class="submit-auth-btn" [disabled]="isLoading() || loginForm.invalid">
+          <span *ngIf="!isLoading()">{{ ts.currentLang() === 'ar' ? 'دخول' : 'Sign In' }} ➔</span>
+          <span *ngIf="isLoading()">⌛ {{ ts.currentLang() === 'ar' ? 'جاري التحقق...' : 'Authenticating...' }}</span>
+        </button>
+      </form>
+    }
+
+    <!-- Register Form -->
+    @if (mode() === 'register') {
+      <form [formGroup]="registerForm" (ngSubmit)="onRegister()" class="auth-form">
+        <div class="form-group">
+          <label class="form-label">{{ ts.currentLang() === 'ar' ? 'الاسم الكامل' : 'Full Name' }}</label>
+          <input type="text" formControlName="fullName" class="form-input" [placeholder]="ts.currentLang() === 'ar' ? 'أحمد محمود' : 'John Doe'">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">{{ ts.currentLang() === 'ar' ? 'البريد الإلكتروني' : 'Email Address' }}</label>
+          <input type="email" formControlName="email" class="form-input" placeholder="name@example.com">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">{{ ts.currentLang() === 'ar' ? 'كلمة المرور' : 'Password' }}</label>
+          <input type="password" formControlName="password" class="form-input" placeholder="••••••••">
+        </div>
+
+        <button type="submit" class="submit-auth-btn" [disabled]="isLoading() || registerForm.invalid">
+          <span *ngIf="!isLoading()">{{ ts.currentLang() === 'ar' ? 'إنشاء الحساب' : 'Create Account' }} ➔</span>
+          <span *ngIf="isLoading()">⌛ {{ ts.currentLang() === 'ar' ? 'جاري إنشاء الحساب...' : 'Creating Account...' }}</span>
+        </button>
+      </form>
+    }
+  </div>
+</div>
