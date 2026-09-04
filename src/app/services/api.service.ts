@@ -33,6 +33,9 @@ export interface BookingHistoryItem {
   id: number;
   fullName: string;
   businessType: string;
+  phone: string;
+  countryCode?: string;
+  serviceId?: number;
   serviceNameAr: string;
   serviceNameEn: string;
   serviceIcon: string;
@@ -116,6 +119,20 @@ export class ApiService {
     return this.http.get<BookingHistoryItem[]>(`${this.localApiUrl}/bookings/history`, { params: { phone } }).pipe(
       retry({ count: 1, delay: 500 }),
       catchError(() => this.http.get<BookingHistoryItem[]>(`${this.apiUrl}/bookings/history`, { params: { phone } }))
+    );
+  }
+
+  updateBooking(id: number, payload: CreateBookingPayload): Observable<BookingResponse> {
+    return this.http.put<BookingResponse>(`${this.localApiUrl}/bookings/${id}`, payload).pipe(
+      retry({ count: 1, delay: 500 }),
+      catchError(() => this.http.put<BookingResponse>(`${this.apiUrl}/bookings/${id}`, payload))
+    );
+  }
+
+  deleteBooking(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.localApiUrl}/bookings/${id}`).pipe(
+      retry({ count: 1, delay: 500 }),
+      catchError(() => this.http.delete<any>(`${this.apiUrl}/bookings/${id}`))
     );
   }
 }

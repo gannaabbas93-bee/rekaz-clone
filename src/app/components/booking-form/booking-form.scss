@@ -760,6 +760,88 @@
         }
       }
     }
+
+    .history-card-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid #f1f5f9;
+
+      .action-btn {
+        flex: 1;
+        padding: 6px 12px;
+        border: none;
+        border-radius: 8px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        &.edit-action-btn {
+          background: #eff6ff;
+          color: #2563eb;
+          border: 1px solid #bfdbfe;
+
+          &:hover {
+            background: #dbeafe;
+          }
+        }
+
+        &.delete-action-btn {
+          background: #fef2f2;
+          color: #dc2626;
+          border: 1px solid #fecaca;
+
+          &:hover {
+            background: #fee2e2;
+          }
+        }
+      }
+    }
   }
 }
+
+/* Edit Mode Active Banner */
+.edit-mode-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #eff6ff;
+  border: 1px solid #93c5fd;
+  padding: 10px 14px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+
+  .banner-info {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #1e40af;
+  }
+
+  .cancel-edit-btn {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: #475569;
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: #f1f5f9;
+      color: #0f172a;
+    }
+  }
+}
+
+.submit-btn.update-btn {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  &:hover {
+    background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+  }
+}
+
 

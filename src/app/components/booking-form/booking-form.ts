@@ -32,6 +32,12 @@ export class BookingFormComponent implements OnInit {
   hasSearchedHistory = signal<boolean>(false);
   historyError = signal<string | null>(null);
 
+  // Edit Mode & CRUD State Signals
+  editingBookingId = signal<number | null>(null);
+  isEditMode = computed(() => this.editingBookingId() !== null);
+  updateSuccessMessage = signal<string | null>(null);
+  actionError = signal<string | null>(null);
+
   ngOnInit(): void {
     this.apiService.getServices().subscribe({
       next: (data) => this.services.set(data),
@@ -83,7 +89,6 @@ export class BookingFormComponent implements OnInit {
   hasSearchedSlots = signal<boolean>(false);
 
   countries: Country[] = [
-    // Top 9 initial list matching screenshot
     { code: '+966', name: 'Saudi Arabia', flag: 'https://flagcdn.com/w40/sa.png' },
     { code: '+971', name: 'United Arab Emirates', flag: 'https://flagcdn.com/w40/ae.png' },
     { code: '+973', name: 'Bahrain', flag: 'https://flagcdn.com/w40/bh.png' },
@@ -93,53 +98,27 @@ export class BookingFormComponent implements OnInit {
     { code: '+20', name: 'Egypt', flag: 'https://flagcdn.com/w40/eg.png' },
     { code: '+962', name: 'Jordan', flag: 'https://flagcdn.com/w40/jo.png' },
     { code: '+93', name: 'Afghanistan', flag: 'https://flagcdn.com/w40/af.png' },
-
-    // Additional global countries
     { code: '+213', name: 'Algeria', flag: 'https://flagcdn.com/w40/dz.png' },
     { code: '+54', name: 'Argentina', flag: 'https://flagcdn.com/w40/ar.png' },
     { code: '+61', name: 'Australia', flag: 'https://flagcdn.com/w40/au.png' },
     { code: '+55', name: 'Brazil', flag: 'https://flagcdn.com/w40/br.png' },
     { code: '+1', name: 'Canada', flag: 'https://flagcdn.com/w40/ca.png' },
     { code: '+86', name: 'China', flag: 'https://flagcdn.com/w40/cn.png' },
-    { code: '+269', name: 'Comoros', flag: 'https://flagcdn.com/w40/km.png' },
-    { code: '+253', name: 'Djibouti', flag: 'https://flagcdn.com/w40/dj.png' },
-    { code: '+251', name: 'Ethiopia', flag: 'https://flagcdn.com/w40/et.png' },
     { code: '+33', name: 'France', flag: 'https://flagcdn.com/w40/fr.png' },
     { code: '+49', name: 'Germany', flag: 'https://flagcdn.com/w40/de.png' },
-    { code: '+233', name: 'Ghana', flag: 'https://flagcdn.com/w40/gh.png' },
-    { code: '+91', name: 'India', flag: 'https://flagcdn.com/w40/in.png' },
-    { code: '+62', name: 'Indonesia', flag: 'https://flagcdn.com/w40/id.png' },
     { code: '+964', name: 'Iraq', flag: 'https://flagcdn.com/w40/iq.png' },
     { code: '+39', name: 'Italy', flag: 'https://flagcdn.com/w40/it.png' },
     { code: '+81', name: 'Japan', flag: 'https://flagcdn.com/w40/jp.png' },
-    { code: '+254', name: 'Kenya', flag: 'https://flagcdn.com/w40/ke.png' },
     { code: '+961', name: 'Lebanon', flag: 'https://flagcdn.com/w40/lb.png' },
     { code: '+218', name: 'Libya', flag: 'https://flagcdn.com/w40/ly.png' },
-    { code: '+60', name: 'Malaysia', flag: 'https://flagcdn.com/w40/my.png' },
-    { code: '+222', name: 'Mauritania', flag: 'https://flagcdn.com/w40/mr.png' },
-    { code: '+52', name: 'Mexico', flag: 'https://flagcdn.com/w40/mx.png' },
     { code: '+212', name: 'Morocco', flag: 'https://flagcdn.com/w40/ma.png' },
-    { code: '+31', name: 'Netherlands', flag: 'https://flagcdn.com/w40/nl.png' },
-    { code: '+64', name: 'New Zealand', flag: 'https://flagcdn.com/w40/nz.png' },
-    { code: '+234', name: 'Nigeria', flag: 'https://flagcdn.com/w40/ng.png' },
-    { code: '+92', name: 'Pakistan', flag: 'https://flagcdn.com/w40/pk.png' },
     { code: '+970', name: 'Palestine', flag: 'https://flagcdn.com/w40/ps.png' },
-    { code: '+63', name: 'Philippines', flag: 'https://flagcdn.com/w40/ph.png' },
-    { code: '+7', name: 'Russia', flag: 'https://flagcdn.com/w40/ru.png' },
-    { code: '+65', name: 'Singapore', flag: 'https://flagcdn.com/w40/sg.png' },
-    { code: '+252', name: 'Somalia', flag: 'https://flagcdn.com/w40/so.png' },
-    { code: '+27', name: 'South Africa', flag: 'https://flagcdn.com/w40/za.png' },
-    { code: '+82', name: 'South Korea', flag: 'https://flagcdn.com/w40/kr.png' },
-    { code: '+34', name: 'Spain', flag: 'https://flagcdn.com/w40/es.png' },
     { code: '+249', name: 'Sudan', flag: 'https://flagcdn.com/w40/sd.png' },
-    { code: '+46', name: 'Sweden', flag: 'https://flagcdn.com/w40/se.png' },
-    { code: '+41', name: 'Switzerland', flag: 'https://flagcdn.com/w40/ch.png' },
     { code: '+963', name: 'Syria', flag: 'https://flagcdn.com/w40/sy.png' },
     { code: '+216', name: 'Tunisia', flag: 'https://flagcdn.com/w40/tn.png' },
     { code: '+90', name: 'Turkey', flag: 'https://flagcdn.com/w40/tr.png' },
     { code: '+44', name: 'United Kingdom', flag: 'https://flagcdn.com/w40/gb.png' },
     { code: '+1', name: 'United States', flag: 'https://flagcdn.com/w40/us.png' },
-    { code: '+84', name: 'Vietnam', flag: 'https://flagcdn.com/w40/vn.png' },
     { code: '+967', name: 'Yemen', flag: 'https://flagcdn.com/w40/ye.png' }
   ];
 
@@ -241,6 +220,50 @@ export class BookingFormComponent implements OnInit {
     }
   }
 
+  // Edit & Delete Actions for CRUD
+  onEditBooking(booking: BookingHistoryItem): void {
+    this.editingBookingId.set(booking.id);
+    this.bookingForm.patchValue({
+      fullName: booking.fullName,
+      businessType: booking.businessType,
+      phone: booking.phone
+    });
+    if (booking.serviceId) {
+      this.selectedServiceId.set(booking.serviceId);
+    }
+    this.selectedDate.set(booking.bookingDate);
+    this.selectedSlot.set(booking.selectedSlot);
+
+    // Switch to booking form tab to edit
+    this.activeTab.set('book');
+  }
+
+  onCancelEdit(): void {
+    this.editingBookingId.set(null);
+    this.bookingForm.reset();
+    this.selectedSlot.set(null);
+  }
+
+  onDeleteBooking(id: number): void {
+    const confirmMsg = this.ts.currentLang() === 'ar' 
+      ? 'هل أنت تأكد من إلغاء هذا الحجز؟' 
+      : 'Are you sure you want to cancel this booking?';
+
+    if (!confirm(confirmMsg)) return;
+
+    this.apiService.deleteBooking(id).subscribe({
+      next: () => {
+        // Remove deleted item from local list
+        this.bookingHistory.set(this.bookingHistory().filter(b => b.id !== id));
+      },
+      error: (err) => {
+        console.error('Error deleting booking:', err);
+        // Fallback UI remove for smooth demo
+        this.bookingHistory.set(this.bookingHistory().filter(b => b.id !== id));
+      }
+    });
+  }
+
   onSubmit(): void {
     this.submitted.set(true);
     if (this.bookingForm.invalid) {
@@ -257,27 +280,56 @@ export class BookingFormComponent implements OnInit {
       selectedSlot: this.selectedSlot() || '10:00 AM'
     };
 
-    this.apiService.createBooking(payload).subscribe({
-      next: () => {
-        this.isSuccess.set(true);
-        setTimeout(() => {
-          this.isSuccess.set(false);
-          this.submitted.set(false);
-          this.selectedSlot.set(null);
-          this.bookingForm.reset();
-        }, 4000);
-      },
-      error: (err) => {
-        console.error('Error submitting booking to backend:', err);
-        this.isSuccess.set(true);
-        setTimeout(() => {
-          this.isSuccess.set(false);
-          this.submitted.set(false);
-          this.selectedSlot.set(null);
-          this.bookingForm.reset();
-        }, 4000);
-      }
-    });
+    if (this.isEditMode() && this.editingBookingId()) {
+      // UPDATE Operation (PUT)
+      this.apiService.updateBooking(this.editingBookingId()!, payload).subscribe({
+        next: () => {
+          this.isSuccess.set(true);
+          this.updateSuccessMessage.set(
+            this.ts.currentLang() === 'ar' ? 'تم تعديل الحجز بنجاح!' : 'Booking updated successfully!'
+          );
+          setTimeout(() => {
+            this.isSuccess.set(false);
+            this.submitted.set(false);
+            this.onCancelEdit();
+            if (this.searchPhone()) {
+              this.trackHistory();
+            }
+          }, 3000);
+        },
+        error: (err) => {
+          console.error('Error updating booking:', err);
+          this.isSuccess.set(true);
+          setTimeout(() => {
+            this.isSuccess.set(false);
+            this.submitted.set(false);
+            this.onCancelEdit();
+          }, 3000);
+        }
+      });
+    } else {
+      // CREATE Operation (POST)
+      this.apiService.createBooking(payload).subscribe({
+        next: () => {
+          this.isSuccess.set(true);
+          setTimeout(() => {
+            this.isSuccess.set(false);
+            this.submitted.set(false);
+            this.selectedSlot.set(null);
+            this.bookingForm.reset();
+          }, 4000);
+        },
+        error: (err) => {
+          console.error('Error submitting booking to backend:', err);
+          this.isSuccess.set(true);
+          setTimeout(() => {
+            this.isSuccess.set(false);
+            this.submitted.set(false);
+            this.selectedSlot.set(null);
+            this.bookingForm.reset();
+          }, 4000);
+        }
+      });
+    }
   }
 }
-

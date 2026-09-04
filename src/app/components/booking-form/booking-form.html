@@ -11,7 +11,7 @@
       <!-- Navigation Tabs -->
       <div class="booking-tabs-nav">
         <button type="button" class="tab-btn" [class.active]="activeTab() === 'book'" (click)="switchTab('book')">
-          <span>📅 {{ ts.currentLang() === 'ar' ? 'طلب حجز جديد' : 'New Booking' }}</span>
+          <span>📅 {{ isEditMode() ? (ts.currentLang() === 'ar' ? 'تعديل الحجز' : 'Edit Booking') : (ts.currentLang() === 'ar' ? 'طلب حجز جديد' : 'New Booking') }}</span>
         </button>
         <button type="button" class="tab-btn" [class.active]="activeTab() === 'history'" (click)="switchTab('history')">
           <span>🔍 {{ ts.currentLang() === 'ar' ? 'متابعة حجوزاتي' : 'Track My Bookings' }}</span>
@@ -22,10 +22,22 @@
         @if (isSuccess()) {
           <div class="success-message">
             <div class="success-icon">✓</div>
-            <h3>{{ ts.currentLang() === 'ar' ? 'تم استلام طلبك بنجاح!' : 'Request received successfully!' }}</h3>
-            <p>{{ ts.currentLang() === 'ar' ? 'سيتواصل معك فريقنا في أقرب وقت ممكن.' : 'Our team will get in touch with you shortly.' }}</p>
+            <h3>{{ updateSuccessMessage() ? updateSuccessMessage() : (ts.currentLang() === 'ar' ? 'تم استلام طلبك بنجاح!' : 'Request received successfully!') }}</h3>
+            <p>{{ ts.currentLang() === 'ar' ? 'تم تحديث البيانات والسجلات بنجاح.' : 'Data and records updated successfully.' }}</p>
           </div>
         } @else {
+          <!-- Edit Mode Active Alert Banner -->
+          @if (isEditMode()) {
+            <div class="edit-mode-banner">
+              <div class="banner-info">
+                <span>✏️ {{ ts.currentLang() === 'ar' ? 'وضع تعديل الحجز رقم' : 'Editing Booking' }} <strong>#{{ editingBookingId() }}</strong></span>
+              </div>
+              <button type="button" class="cancel-edit-btn" (click)="onCancelEdit()">
+                ✖ {{ ts.currentLang() === 'ar' ? 'إلغاء التعديل' : 'Cancel Edit' }}
+              </button>
+            </div>
+          }
+
           <form [formGroup]="bookingForm" (ngSubmit)="onSubmit()" class="booking-form" novalidate>
             <!-- Live .NET Availability Checker Section -->
             <div class="availability-box">
@@ -224,8 +236,8 @@
             </div>
 
             <!-- Submit Button -->
-            <button type="submit" class="submit-btn">
-              <span>{{ ts.t().bookingForm.submitButton }}</span>
+            <button type="submit" class="submit-btn" [class.update-btn]="isEditMode()">
+              <span>{{ isEditMode() ? (ts.currentLang() === 'ar' ? 'حفظ التعديلات' : 'Save Changes') : ts.t().bookingForm.submitButton }}</span>
               <span class="btn-arrow" [class.rtl-arrow]="ts.currentLang() === 'ar'">➔</span>
             </button>
           </form>
@@ -280,6 +292,16 @@
                         <span class="info-label">🕒 {{ ts.currentLang() === 'ar' ? 'تاريخ الإنشاء:' : 'Created:' }}</span>
                         <span class="info-value">{{ b.createdAt | date:'medium' }}</span>
                       </div>
+                    </div>
+
+                    <!-- CRUD Action Buttons (Update & Delete) -->
+                    <div class="history-card-actions">
+                      <button type="button" class="action-btn edit-action-btn" (click)="onEditBooking(b)">
+                        ✏️ {{ ts.currentLang() === 'ar' ? 'تعديل الحجز' : 'Edit' }}
+                      </button>
+                      <button type="button" class="action-btn delete-action-btn" (click)="onDeleteBooking(b.id)">
+                        🗑️ {{ ts.currentLang() === 'ar' ? 'إلغاء الحجز' : 'Cancel' }}
+                      </button>
                     </div>
                   </div>
                 }
