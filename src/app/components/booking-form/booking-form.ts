@@ -244,22 +244,23 @@ export class BookingFormComponent implements OnInit {
     this.selectedSlot.set(null);
   }
 
-  onDeleteBooking(id: number): void {
-    const confirmMsg = this.ts.currentLang() === 'ar' 
-      ? 'هل أنت تأكد من إلغاء هذا الحجز؟' 
-      : 'Are you sure you want to cancel this booking?';
+  onDeleteBooking(id: number, event?: Event): void {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
 
-    if (!confirm(confirmMsg)) return;
+    // Immediate optimistic removal from UI Signal state
+    const currentList = this.bookingHistory();
+    this.bookingHistory.set(currentList.filter(b => b.id !== id));
 
+    // Send HTTP DELETE to backend
     this.apiService.deleteBooking(id).subscribe({
       next: () => {
-        // Remove deleted item from local list
-        this.bookingHistory.set(this.bookingHistory().filter(b => b.id !== id));
+        console.log(`Booking #${id} deleted successfully from server.`);
       },
       error: (err) => {
-        console.error('Error deleting booking:', err);
-        // Fallback UI remove for smooth demo
-        this.bookingHistory.set(this.bookingHistory().filter(b => b.id !== id));
+        console.error('Backend DELETE error:', err);
       }
     });
   }

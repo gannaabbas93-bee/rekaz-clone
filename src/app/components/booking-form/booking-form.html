@@ -299,7 +299,7 @@
                       <button type="button" class="action-btn edit-action-btn" (click)="onEditBooking(b)">
                         ✏️ {{ ts.currentLang() === 'ar' ? 'تعديل الحجز' : 'Edit' }}
                       </button>
-                      <button type="button" class="action-btn delete-action-btn" (click)="onDeleteBooking(b.id)">
+                      <button type="button" class="action-btn delete-action-btn" (click)="onDeleteBooking(b.id, $event)">
                         🗑️ {{ ts.currentLang() === 'ar' ? 'إلغاء الحجز' : 'Cancel' }}
                       </button>
                     </div>
