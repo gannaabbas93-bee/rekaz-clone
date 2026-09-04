@@ -37,6 +37,7 @@ export class BookingFormComponent implements OnInit {
   isEditMode = computed(() => this.editingBookingId() !== null);
   updateSuccessMessage = signal<string | null>(null);
   actionError = signal<string | null>(null);
+  isSubmitting = signal<boolean>(false);
 
   ngOnInit(): void {
     this.apiService.getServices().subscribe({
@@ -271,6 +272,8 @@ export class BookingFormComponent implements OnInit {
       return;
     }
 
+    this.isSubmitting.set(true);
+
     const payload = {
       fullName: this.bookingForm.value.fullName || '',
       businessType: this.bookingForm.value.businessType || '',
@@ -285,6 +288,7 @@ export class BookingFormComponent implements OnInit {
       // UPDATE Operation (PUT)
       this.apiService.updateBooking(this.editingBookingId()!, payload).subscribe({
         next: () => {
+          this.isSubmitting.set(false);
           this.isSuccess.set(true);
           this.updateSuccessMessage.set(
             this.ts.currentLang() === 'ar' ? 'تم تعديل الحجز بنجاح!' : 'Booking updated successfully!'
@@ -300,6 +304,7 @@ export class BookingFormComponent implements OnInit {
         },
         error: (err) => {
           console.error('Error updating booking:', err);
+          this.isSubmitting.set(false);
           this.isSuccess.set(true);
           setTimeout(() => {
             this.isSuccess.set(false);
@@ -312,6 +317,7 @@ export class BookingFormComponent implements OnInit {
       // CREATE Operation (POST)
       this.apiService.createBooking(payload).subscribe({
         next: () => {
+          this.isSubmitting.set(false);
           this.isSuccess.set(true);
           setTimeout(() => {
             this.isSuccess.set(false);
@@ -322,6 +328,7 @@ export class BookingFormComponent implements OnInit {
         },
         error: (err) => {
           console.error('Error submitting booking to backend:', err);
+          this.isSubmitting.set(false);
           this.isSuccess.set(true);
           setTimeout(() => {
             this.isSuccess.set(false);

@@ -8,6 +8,9 @@
 
     <!-- Form Card -->
     <div class="booking-card">
+      <!-- Animated Top Progress Bar when Saving -->
+      <div class="form-progress-bar" *ngIf="isSubmitting()"></div>
+
       <!-- Navigation Tabs -->
       <div class="booking-tabs-nav">
         <button type="button" class="tab-btn" [class.active]="activeTab() === 'book'" (click)="switchTab('book')">
@@ -235,10 +238,11 @@
               }
             </div>
 
-            <!-- Submit Button -->
-            <button type="submit" class="submit-btn" [class.update-btn]="isEditMode()">
-              <span>{{ isEditMode() ? (ts.currentLang() === 'ar' ? 'حفظ التعديلات' : 'Save Changes') : ts.t().bookingForm.submitButton }}</span>
-              <span class="btn-arrow" [class.rtl-arrow]="ts.currentLang() === 'ar'">➔</span>
+            <!-- Submit Button with Progress State -->
+            <button type="submit" class="submit-btn" [class.update-btn]="isEditMode()" [disabled]="isSubmitting()">
+              <span *ngIf="!isSubmitting()">{{ isEditMode() ? (ts.currentLang() === 'ar' ? 'حفظ التعديلات' : 'Save Changes') : ts.t().bookingForm.submitButton }}</span>
+              <span *ngIf="isSubmitting()" class="submitting-text">⌛ {{ ts.currentLang() === 'ar' ? 'جاري حفظ البيانات...' : 'Saving booking...' }}</span>
+              <span *ngIf="!isSubmitting()" class="btn-arrow" [class.rtl-arrow]="ts.currentLang() === 'ar'">➔</span>
             </button>
           </form>
         }
