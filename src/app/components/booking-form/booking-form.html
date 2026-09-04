@@ -258,7 +258,7 @@
             </div>
             <button type="button" class="check-slots-btn search-history-btn" (click)="trackHistory()" [disabled]="isLoadingHistory()">
               <span *ngIf="!isLoadingHistory()">🔍 {{ ts.currentLang() === 'ar' ? 'بحث عن الحجوزات' : 'Find Bookings' }}</span>
-              <span *ngIf="isLoadingHistory()">⌛ {{ ts.currentLang() === 'ar' ? 'جاري الاستعلام من الداتابيز...' : 'Querying Database...' }}</span>
+              <span *ngIf="isLoadingHistory()">⌛ {{ ts.currentLang() === 'ar' ? 'جاري التحميل...' : 'Loading...' }}</span>
             </button>
           </div>
 
@@ -305,12 +305,6 @@
                     </div>
                   </div>
                 }
-              </div>
-            }
-
-            @if (!historyError() && bookingHistory().length === 0) {
-              <div class="no-slots">
-                {{ ts.currentLang() === 'ar' ? 'لا توجد حجوزات مسجلة برقم الهاتف المدخل' : 'No bookings found for this phone number' }}
               </div>
             }
           </div>
